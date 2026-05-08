@@ -1,0 +1,138 @@
+{
+  "potato": {
+    "id": "potato",
+    "name": "土豆",
+    "icon": "🥔",
+    "season": "spring",
+    "growDays": 4,
+    "witherDays": 5,
+    "seedPrice": 25,
+    "sellPrice": 80,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#2E8B2E"
+    }
+  },
+  "tomato": {
+    "id": "tomato",
+    "name": "番茄",
+    "icon": "🍅",
+    "season": "summer",
+    "growDays": 5,
+    "witherDays": 4,
+    "seedPrice": 30,
+    "sellPrice": 100,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#FF6347"
+    }
+  },
+  "corn": {
+    "id": "corn",
+    "name": "玉米",
+    "icon": "🌽",
+    "season": "summer",
+    "growDays": 6,
+    "witherDays": 6,
+    "seedPrice": 35,
+    "sellPrice": 120,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#FFD700"
+    }
+  },
+  "carrot": {
+    "id": "carrot",
+    "name": "胡萝卜",
+    "icon": "🥕",
+    "season": "spring",
+    "growDays": 3,
+    "witherDays": 4,
+    "seedPrice": 20,
+    "sellPrice": 60,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#FF8C00"
+    }
+  },
+  "pumpkin": {
+    "id": "pumpkin",
+    "name": "南瓜",
+    "icon": "🎃",
+    "season": "autumn",
+    "growDays": 7,
+    "witherDays": 7,
+    "seedPrice": 50,
+    "sellPrice": 180,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#FF7518"
+    }
+  },
+  "strawberry": {
+    "id": "strawberry",
+    "name": "草莓",
+    "icon": "🍓",
+    "season": "spring",
+    "growDays": 5,
+    "witherDays": 3,
+    "seedPrice": 40,
+    "sellPrice": 130,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#DC143C"
+    }
+  },
+  "watermelon": {
+    "id": "watermelon",
+    "name": "西瓜",
+    "icon": "🍉",
+    "season": "summer",
+    "growDays": 8,
+    "witherDays": 5,
+    "seedPrice": 60,
+    "sellPrice": 200,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#228B22"
+    }
+  },
+  "cabbage": {
+    "id": "cabbage",
+    "name": "卷心菜",
+    "icon": "🥬",
+    "season": "autumn",
+    "growDays": 5,
+    "witherDays": 6,
+    "seedPrice": 35,
+    "sellPrice": 110,
+    "stages": ["seed", "sprout", "growing", "mature"],
+    "colors": {
+      "seed": "#8B4513",
+      "sprout": "#90EE90",
+      "growing": "#228B22",
+      "mature": "#90EE90"
+    }
+  }
+}
