@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KOS 中台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="top-brand">
+        <div class="brand">KOS</div>
+        <strong>保险销售AI中台</strong>
+      </div>
+      <div class="top-tools">
+        <button class="settings-btn" title="设置">设置</button>
+        <button class="user-avatar" title="用户头像" aria-label="用户头像"></button>
+      </div>
+    </header>
+    <div class="app-shell">
+      <aside class="rail">
+        <nav class="rail-nav" aria-label="主导航">
+          <button class="rail-item active" title="对话" data-view="chat"><span class="icon chat"></span><span>对话</span></button>
+          <button class="rail-item" title="创作" data-view="creation"><span class="icon arrow"></span><span>创作</span></button>
+        </nav>
+      </aside>
+
+      <aside class="inbox">
+        <div class="inbox-fixed">
+          <header class="inbox-header">
+            <h1>消息汇总列表</h1>
+            <strong id="customerCount">按时间排序</strong>
+          </header>
+          <section class="account-strip" aria-label="平台账号">
+            <button class="account-card active"><span class="platform-logo douyin" aria-label="抖音图标"></span><b>抖音</b><em>25</em></button>
+            <button class="account-card"><span class="platform-logo zhihu" aria-label="知乎图标">知</span><b>知乎</b><em>12</em></button>
+            <button class="account-card"><span class="platform-logo xhs" aria-label="小红书图标">RED</span><b>小红书</b><em>8</em></button>
+          </section>
+        </div>
+        <div class="inbox-scroll">
+          <section class="platform-group">
+            <button class="group-title" type="button" aria-expanded="true">
+              <span class="chevron" aria-hidden="true"></span>
+              <span class="dot blue"></span>
+              消息列表
+              <span class="count">3</span>
+            </button>
+            <div class="customer-list" id="customerList"></div>
+          </section>
+          <section class="platform-group">
+            <button class="group-title" type="button" aria-expanded="true">
+              <span class="chevron" aria-hidden="true"></span>
+              <span class="dot amber"></span>
+              意向热聊
+              <span class="count">3</span>
+            </button>
+            <div class="customer-list" id="hotList"></div>
+          </section>
+        </div>
+      </aside>
+
+      <main class="conversation">
+        <header class="chat-header">
+          <div class="customer-profile">
+            <img id="profileAvatar" alt="" />
+            <div>
+              <h2 id="profileName"></h2>
+              <p><span class="source-badge" id="profileSource"></span><span id="profileStatus"></span></p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="primary-light" id="insightButton">客户画像</button>
+          </div>
+        </header>
+
+        <section class="chat-scroll" id="chatScroll">
+          <div class="date-divider"><span>今天</span></div>
+          <div id="messages"></div>
+        </section>
+
+        <section class="customer-tags">
+          <span class="tag-line"></span>
+          <button class="tag selected" data-intent="画像">客户画像</button>
+          <button class="tag" data-intent="38岁">38 岁</button>
+          <button class="tag" data-intent="企业中层">企业中层</button>
+          <button class="tag" data-intent="已婚有娃">已婚有娃</button>
+          <button class="tag" data-intent="重疾关注">重疾关注</button>
+          <button class="tag danger" data-intent="高意向">高意向</button>
+          <button class="tag warm" data-intent="中意向">中意向</button>
+          <button class="tag neutral" data-intent="低意向">低意向</button>
+          <button class="collapse">收起⌄</button>
+        </section>
+
+        <section class="composer">
+          <div class="mode-tabs">
+            <button class="mode active" data-mode="ai">AI 托管</button>
+            <button class="mode" data-mode="assist">人机协作</button>
+            <button class="mode" data-mode="manual">纯人工</button>
+          </div>
+          <div class="template-row" id="templateRow"></div>
+          <textarea id="composerInput" placeholder="输入消息...  Enter 发送 / Shift+Enter 换行"></textarea>
+          <div class="composer-footer">
+            <span id="composerHint">AI 托管中 · 系统会自动接管已确认草稿</span>
+            <button id="sendButton">发送 ↵</button>
+          </div>
+        </section>
+      </main>
+
+      <section class="insight-modal hidden" id="insightModal" aria-hidden="true">
+        <div class="insight-dialog" role="dialog" aria-modal="true" aria-labelledby="insightTitle">
+          <header class="insight-head">
+            <div class="customer-profile">
+              <img id="insightAvatar" alt="" />
+              <div>
+                <h2 id="insightTitle">用户画像</h2>
+                <p id="insightSubtitle"></p>
+              </div>
+            </div>
+            <button class="modal-close" id="closeInsight" aria-label="关闭">×</button>
+          </header>
+
+          <section class="insight-score">
+            <div>
+              <span>AI 意向评分</span>
+              <strong id="insightScore">86</strong>
+            </div>
+            <p id="insightSummary"></p>
+          </section>
+
+          <section class="insight-grid">
+            <article class="insight-card">
+              <h3>基础画像</h3>
+              <ul id="profileFacts"></ul>
+            </article>
+            <article class="insight-card">
+              <h3>需求判断</h3>
+              <ul id="profileNeeds"></ul>
+            </article>
+            <article class="insight-card">
+              <h3>风险关注</h3>
+              <ul id="profileRisks"></ul>
+            </article>
+            <article class="insight-card">
+              <h3>跟进建议</h3>
+              <ul id="profileNext"></ul>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <aside class="copilot">
+        <header class="copilot-header">
+          <div class="copilot-title">
+            <div class="ai-mark">✣</div>
+            <div>
+              <h2>AI小秘 <span></span></h2>
+            </div>
+          </div>
+          <button class="fold">» 收起</button>
+        </header>
+
+        <section class="ai-status">
+          <article class="ai-step expanded">
+            <button class="step-toggle" type="button" aria-expanded="true"><span class="check">✓</span><strong>应答 · 缴费期异议</strong><b>1.6s</b></button>
+            <div class="step-detail">识别客户核心异议：担心 30 年缴费周期长，未来身体或收入变化导致断缴。</div>
+          </article>
+          <article class="ai-step">
+            <button class="step-toggle" type="button" aria-expanded="false"><span class="check">✓</span><strong>思考 · Thinking</strong><b>3 条要点⌄</b></button>
+            <div class="step-detail">要点：现金流压力、豁免责任、保障持续有效性。</div>
+          </article>
+          <article class="ai-step">
+            <button class="step-toggle" type="button" aria-expanded="false"><span class="check">✓</span><strong>规划 · Plan</strong><b>4 个步骤⌄</b></button>
+            <div class="step-detail">步骤：共情顾虑 → 对比缴费期 → 解释豁免 → 引导查看合同责任。</div>
+          </article>
+          <article class="ai-step">
+            <button class="step-toggle" type="button" aria-expanded="false"><span class="check">✓</span><strong>执行 · Execution</strong><b>2 引用 · 3 校验⌄</b></button>
+            <div class="step-detail">引用产品责任、费率测算；校验保额、缴费期、豁免触发条件。</div>
+          </article>
+        </section>
+
+        <section class="reply-card">
+          <div class="reply-content">
+            <div class="reply-head">
+              <span class="check">✓</span>
+              <strong>应答 · Reply</strong>
+              <button>⌃</button>
+            </div>
+            <h3>话术草稿 · 已附产品对比</h3>
+            <article id="aiDraft"></article>
+          </div>
+          <div class="reply-actions">
+            <button id="rewriteButton">重写</button>
+            <button id="editDraftButton">编辑</button>
+            <button id="approveButton">一键审核并发送 ▶</button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="creation-workspace hidden" id="creationWorkspace">
+        <section class="creation-main">
+          <header class="creation-header">
+            <div>
+              <h1>内容创作助手</h1>
+              <p>热点捕捉 · AI文案生成 · 模板化发布</p>
+            </div>
+            <button class="primary-light" id="generateCopyTop">生成文案</button>
+          </header>
+
+          <section class="trend-panel">
+            <div class="section-title">
+              <h2>今日热点 TOP10</h2>
+              <span>小红书 / 抖音实时抓取</span>
+            </div>
+            <div class="trend-list">
+              <button class="trend-card active" data-topic="变好的人生">
+                <b>01</b>
+                <span>变好的人生，从先给自己一份确定性开始</span>
+                <em>热度 98</em>
+              </button>
+              <button class="trend-card" data-topic="30岁女性保障">
+                <b>02</b>
+                <span>30岁之后，为什么更要关注家庭保障</span>
+                <em>热度 91</em>
+              </button>
+              <button class="trend-card" data-topic="普通家庭抗风险">
+                <b>03</b>
+                <span>普通家庭最怕的不是支出，而是突然的大风险</span>
+                <em>热度 87</em>
+              </button>
+              <button class="trend-card" data-topic="给父母配置保险">
+                <b>04</b>
+                <span>给父母配置保险，先看这三个关键点</span>
+                <em>热度 82</em>
+              </button>
+            </div>
+          </section>
+
+          <section class="creation-grid">
+            <article class="creator-card">
+              <div class="section-title">
+                <h2>热点结合建议</h2>
+                <span>P0</span>
+              </div>
+              <div class="idea-box" id="ideaBox">
+                建议围绕“变好的人生”切入，把保险从“焦虑消费”转为“给未来留选择权”，更适合小红书种草语境。
+              </div>
+            </article>
+
+            <article class="creator-card">
+              <div class="section-title">
+                <h2>文案模板</h2>
+                <span>4 种模板</span>
+              </div>
+              <div class="template-picker" id="copyTemplatePicker">
+                <button class="copy-template active" data-template="收益展示">收益展示</button>
+                <button class="copy-template" data-template="真实案例">真实案例</button>
+                <button class="copy-template" data-template="产品对比">产品对比</button>
+                <button class="copy-template" data-template="蹭热点">蹭热点</button>
+              </div>
+            </article>
+          </section>
+
+          <section class="generator-panel">
+            <div class="section-title">
+              <h2>AI文案生成</h2>
+              <span>支持图文 + 视频脚本</span>
+            </div>
+            <div class="generator-form">
+              <label>
+                产品名称
+                <input id="productName" value="悦守一生多倍版" placeholder="输入产品名称" />
+              </label>
+              <label>
+                关键词 / 选题
+                <input id="copyKeyword" value="30岁女性 重疾保障 家庭责任" placeholder="输入关键词或选题" />
+              </label>
+              <button id="generateCopyButton">生成可发布文案</button>
+            </div>
+          </section>
+        </section>
+
+        <aside class="creation-side">
+          <header class="creation-side-head">
+            <div class="ai-mark">✦</div>
+            <div>
+              <h2>AI创作结果</h2>
+              <p>已生成 · 可直接发布</p>
+            </div>
+          </header>
+          <article class="copy-output" id="copyOutput"></article>
+          <section class="asset-panel">
+            <div class="section-title">
+              <h2>一键配图</h2>
+              <span>P2</span>
+            </div>
+            <div class="image-suggestion">
+              <span></span>
+              <p>建议画面：深色办公桌、合同页、温暖家庭照片，突出“确定性”和“守护感”。</p>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
