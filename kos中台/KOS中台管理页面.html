@@ -1,0 +1,2864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOS 营销中台 · 保险获客工作台</title>
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+
+/* ── Layout shell ── */
+.kos-shell { display: flex; height: 100vh; overflow: hidden; background: #f7f8fa; }
+
+/* ── Sidebar ── */
+.kos-sider {
+  width: 200px; flex-shrink: 0;
+  background: #fff; border-right: 1px solid #e5e6eb;
+  display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+}
+.kos-logo {
+  padding: 14px 16px; border-bottom: 1px solid #e5e6eb;
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.kos-logo-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: block; flex-shrink: 0; object-fit: cover;
+}
+.kos-nav-new {
+  margin: 10px 10px 4px; height: 34px;
+  background: #165DFF; color: #fff; border: none;
+  border-radius: 8px; font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-family: inherit; font-weight: 500; transition: background .15s; flex-shrink: 0;
+}
+.kos-nav-new:hover { background: #0e42d2; }
+.recent-chat-box { margin: 8px 8px 6px; padding: 8px; border: 1px solid #f2f3f5; border-radius: 8px; background: #fafbfc; flex-shrink: 0; }
+.recent-chat-title { font-size: 10px; color: #86909c; font-weight: 800; letter-spacing: .05em; margin: 0 4px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.recent-chat-toggle { font-size: 11px; color:#86909c; font-weight:800; }
+.recent-chat-list { margin-top:6px; }
+.recent-chat-item { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; align-items: center; padding: 6px 5px; border-radius: 6px; cursor: pointer; color: #4e5969; transition: all .12s; }
+.recent-chat-item:hover { background:#e8f3ff; color:#165DFF; }
+.recent-chat-icon { font-size: 12px; text-align: center; }
+.recent-chat-main { min-width:0; }
+.recent-chat-name { font-size: 11px; font-weight: 700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.recent-chat-time { font-size: 9px; color:#86909c; margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.kos-nav-scroll { flex: 1; overflow-y: auto; padding: 4px 0 8px; }
+.kos-nav-label {
+  font-size: 10px; color: #86909c; font-weight: 700;
+  letter-spacing: .06em; padding: 8px 18px 4px;
+}
+.kos-nav-item {
+  display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 8px;
+  padding: 7px 10px; margin: 1px 8px; border-radius: 6px;
+  font-size: 13px; cursor: pointer; transition: all .12s;
+  color: #4e5969;
+}
+.kos-nav-item:hover { background: #f2f3f5; color: #1d2129; }
+.kos-nav-item.active { background: #e8f3ff; color: #165DFF; font-weight: 600; }
+.kos-nav-item .nav-icon { width: 20px; height:20px; display:flex; align-items:center; justify-content:center; color:inherit; }
+.kos-nav-item .nav-icon svg { width:16px; height:16px; display:block; }
+.kos-nav-item .nav-icon.line svg { fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.kos-nav-item .nav-icon.solid svg { fill:currentColor; stroke:none; }
+.kos-nav-item .nav-badge {
+  font-size: 10px; background: #f53f3f; color: #fff;
+  border-radius: 10px; padding: 1px 6px; font-weight: 700;
+}
+.kos-user-footer {
+  padding: 11px 14px; border-top: 1px solid #e5e6eb;
+  display: flex; align-items: center; gap: 9px; flex-shrink: 0;
+}
+.kos-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #e8f3ff; color: #165DFF;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ── Main ── */
+.kos-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.hot-capture-wrap { position:relative; margin-left:auto; }
+.hot-capture-btn { height:30px; padding:0 12px; border-radius:8px; border:1px solid #ffd591; background:#fff7e8; color:#d46b08; font-size:12px; font-weight:700; display:flex; align-items:center; gap:7px; cursor:pointer; font-family:inherit; }
+.hot-capture-btn:hover { border-color:#ff9a2e; background:#fff1d6; }
+.hot-capture-dot { min-width:16px; height:16px; border-radius:8px; background:#f53f3f; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:10px; }
+.hot-capture-panel { position:absolute; right:0; top:36px; width:320px; background:#fff; border:1px solid #e5e6eb; border-radius:10px; box-shadow:0 14px 34px rgba(15,23,42,.14); z-index:30; overflow:hidden; }
+.hot-capture-head { padding:12px 14px; border-bottom:1px solid #f2f3f5; display:flex; align-items:center; justify-content:space-between; }
+.hot-capture-title { font-size:13px; font-weight:800; color:#1d2129; }
+.hot-capture-sub { font-size:10px; color:#86909c; margin-top:2px; }
+.hot-capture-list { max-height:310px; overflow-y:auto; }
+.hot-capture-item { padding:11px 14px; border-bottom:1px solid #f2f3f5; cursor:pointer; }
+.hot-capture-item:hover { background:#f7f8fa; }
+.hot-capture-item:last-child { border-bottom:none; }
+.hot-capture-time { font-size:10px; color:#86909c; margin-bottom:5px; }
+.hot-capture-name { font-size:12px; font-weight:700; color:#1d2129; line-height:1.45; margin-bottom:6px; }
+.hot-capture-meta { display:flex; gap:6px; flex-wrap:wrap; }
+.hot-capture-tag { font-size:10px; color:#165DFF; background:#e8f3ff; border-radius:8px; padding:2px 6px; font-weight:700; }
+
+/* ── Page wrappers ── */
+.kos-page { display: none; flex: 1; overflow: hidden; }
+.kos-page.active { display: flex; }
+.kos-page.scroll { display: none; flex: 1; overflow-y: auto; }
+.kos-page.scroll.active { display: block; }
+
+/* ── Chat page ── */
+.chat-layout { display: flex; flex: 1; overflow: hidden; }
+
+.persona-rail {
+  width: 118px; flex-shrink: 0; border-right: 1px solid #e5e6eb;
+  background: #fff; padding: 16px 8px; overflow-y: auto;
+}
+.persona-rail-label { font-size: 10px; color: #86909c; font-weight: 700; letter-spacing:.05em; margin-bottom: 10px; padding: 0 4px; }
+.persona-card {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 5px; border: 1.5px solid transparent; border-radius: 10px;
+  padding: 10px 6px; margin-bottom: 8px; cursor: pointer; transition: all .15s;
+}
+.persona-card:hover { background: #f2f3f5; }
+.persona-card.active { border-color: #165DFF; background: #e8f3ff; }
+.persona-avatar-wrap {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #f2f3f5; display: flex; align-items: center;
+  justify-content: center; font-size: 19px; overflow:hidden;
+  box-shadow: inset 0 0 0 1px rgba(22,93,255,.08);
+}
+.persona-card.active .persona-avatar-wrap { background: #fff; }
+.persona-avatar-img { width:100%; height:100%; object-fit:cover; display:block; border-radius:50%; }
+.persona-card-name { font-size: 11px; font-weight: 600; line-height: 1.3; color: #1d2129; }
+.persona-card.active .persona-card-name { color: #165DFF; }
+
+.chat-center { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f7f8fa; }
+.chat-body { flex: 1; overflow-y: auto; padding: 28px 36px 16px; }
+.chat-welcome { margin-bottom: 24px; }
+.chat-welcome-row { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+.chat-welcome h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.02em; }
+.chat-welcome p { font-size: 13px; color: #86909c; line-height: 1.6; margin-bottom: 24px; }
+
+.quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.quick-card {
+  background: #fff; border: 1px solid #e5e6eb; border-radius: 10px;
+  padding: 12px; cursor: pointer; display: flex; align-items: flex-start;
+  gap: 10px; transition: all .15s;
+}
+.quick-card:hover { border-color: #165DFF; box-shadow: 0 0 0 3px rgba(22,93,255,.07); }
+.quick-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow:hidden; background:#f7f8fa;
+  box-shadow: inset 0 0 0 1px rgba(22,93,255,.06);
+}
+.quick-icon-img { width:100%; height:100%; object-fit:cover; display:block; }
+.quick-card-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.quick-card-sub { font-size: 11px; color: #86909c; }
+
+/* messages */
+.msg-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: flex-start; animation: msgIn .2s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.msg-row.user { flex-direction: row-reverse; }
+.msg-av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.msg-av.ai { background: #e8f3ff; color: #165DFF; }
+.msg-av.user { background: #165DFF; color: #fff; }
+.msg-content { display: flex; flex-direction: column; align-items: flex-start; max-width: 82%; }
+.msg-row.user .msg-content { align-items: flex-end; }
+.msg-bubble {
+  border-radius: 12px; padding: 10px 14px; font-size: 13px;
+  line-height: 1.8; max-width: 100%; white-space: pre-wrap;
+}
+.msg-bubble.ai { background: #fff; border: 1px solid #e5e6eb; color: #1d2129; }
+.msg-bubble.user { background: #165DFF; color: #fff; }
+.comply-badge {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
+  padding: 2px 7px; border-radius: 4px; margin-top: 6px; font-weight: 500;
+  background: #e8ffea; color: #00b42a;
+}
+.think-block {
+  margin-top: 8px; background: #e8f3ff; border-radius: 8px;
+  padding: 10px 12px; font-size: 12px; color: #1d5bd8; line-height: 1.7;
+  border-left: 3px solid #165DFF;
+}
+.think-block-label { font-size: 11px; font-weight: 700; margin-bottom: 5px; color: #165DFF; }
+
+/* input area */
+.chat-input-area {
+  padding: 12px 16px; border-top: 1px solid #e5e6eb;
+  background: #fff; flex-shrink: 0;
+}
+.input-box-wrap {
+  border: 1px solid #dcdfe6; border-radius: 10px;
+  overflow: hidden; background: #fff; transition: border-color .15s, box-shadow .15s;
+}
+.input-box-wrap:focus-within { border-color: #165DFF; box-shadow: 0 0 0 1px rgba(22,93,255,.08); }
+.input-mode-tabs { display: flex; border-bottom: 1px solid #e5e6eb; padding: 0 10px; }
+.imt {
+  font-size: 12px; padding: 7px 10px; cursor: pointer;
+  color: #86909c; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; font-weight: 500; transition: all .12s;
+}
+.imt.active { color: #165DFF; border-bottom-color: #165DFF; }
+.chat-ta {
+  width: 100%; border: none; resize: none; padding: 10px 12px;
+  font-size: 13px; background: transparent; color: #1d2129;
+  outline: none; height: 72px; font-family: inherit; line-height: 1.6;
+}
+.input-footer-row {
+  display: flex; align-items: center; padding: 6px 10px;
+  gap: 6px; border-top: 1px solid #e5e6eb;
+}
+.attach-btn-mini {
+  height: 26px; padding: 0 8px; border-radius: 6px; font-size: 11px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 3px;
+  border: 1px solid #e5e6eb; background: #fff; color: #4e5969;
+  font-family: inherit; font-weight: 500; transition: all .12s;
+}
+.attach-btn-mini:hover { border-color: #165DFF; color: #165DFF; }
+.send-circle-btn {
+  width: 32px; height: 32px; border-radius: 50%; background: #165DFF;
+  border: none; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; color: #fff; font-size: 14px;
+  transition: background .12s; flex-shrink: 0;
+}
+.send-circle-btn:hover { background: #0e42d2; }
+.send-circle-btn:disabled { background: #c9cdd4; cursor: not-allowed; }
+.input-hint { font-size: 11px; color: #c9cdd4; margin-top: 6px; text-align: center; }
+
+/* right tools */
+.right-tools {
+  width: 62px; flex-shrink: 0; border-left: 1px solid #e5e6eb;
+  background: #fff; display: flex; flex-direction: column;
+  align-items: center; padding: 8px 0; gap: 3px; overflow-y: auto;
+}
+.rt-btn {
+  width: 50px; min-height: 48px; border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; color: #86909c; gap: 3px; padding: 5px 2px;
+  transition: all .12s; position: relative; flex-shrink: 0;
+}
+.rt-btn:hover, .rt-btn.active { background: #e8f3ff; color: #165DFF; }
+.rt-sep { width: 24px; height: 1px; background: #e5e6eb; margin: 4px 0; flex-shrink: 0; }
+.rt-icon { font-size: 16px; line-height: 1; }
+.rt-label { font-size: 10px; line-height: 1.15; font-weight: 600; max-width: 46px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Data page ── */
+.data-layout { display: flex; flex: 1; overflow: hidden; }
+.data-accts-panel {
+  width: 172px; flex-shrink: 0; border-right: 1px solid #e5e6eb;
+  background: #fff; overflow-y: auto;
+}
+.data-accts-title {
+  font-size: 11px; font-weight: 700; color: #86909c;
+  letter-spacing: .05em; padding: 12px 14px 6px;
+}
+.data-platform-sep { height: 1px; background: #e5e6eb; margin: 5px 14px; }
+.data-platform-label {
+  font-size: 10px; font-weight: 700; color: #86909c;
+  letter-spacing: .04em; padding: 6px 14px 3px;
+  display: flex; align-items: center; gap: 5px;
+}
+.data-acct-row {
+  display: grid; grid-template-columns: 10px minmax(0, 1fr); align-items: flex-start; column-gap: 8px;
+  padding: 8px 14px; cursor: pointer; border-left: 3px solid transparent;
+  transition: all .12s;
+}
+.data-acct-row:hover { background: #f7f8fa; }
+.data-acct-row.active { background: #e8f3ff; border-left-color: #165DFF; }
+.data-acct-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; justify-self: center; }
+.data-acct-name {
+  font-size: 12px; font-weight: 500; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.data-acct-row.active .data-acct-name { color: #165DFF; font-weight: 700; }
+.data-acct-sub { font-size: 10px; color: #86909c; margin-top: 1px; }
+
+.data-main-area { --data-two-col: minmax(0, 1.2fr) minmax(0, 1fr); flex: 1; overflow-y: auto; padding: 16px 20px; background: #f7f8fa; }
+
+/* KPI cards */
+.kpi-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-card { background: #fff; border: 1px solid #e5e6eb; border-radius: 10px; padding: 14px 16px; }
+.kpi-label { font-size: 11px; color: #86909c; font-weight: 500; letter-spacing: .03em; margin-bottom: 6px; }
+.kpi-value { font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1; color: #1d2129; margin-bottom: 5px; }
+.kpi-change { font-size: 11px; display: flex; align-items: center; gap: 3px; }
+.kpi-up { color: #00b42a; }
+.kpi-dn { color: #f53f3f; }
+.kpi-flat { color: #86909c; }
+
+/* charts */
+.charts-row { display: grid; grid-template-columns: var(--data-two-col); gap: 12px; margin-bottom: 14px; }
+.chart-card { background: #fff; border: 1px solid #e5e6eb; border-radius: 10px; padding: 14px; min-width: 0; }
+.chart-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.chart-title-sub { font-size: 11px; color: #86909c; font-weight: 400; }
+.bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+.bar-col-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.bar-item { width: 100%; border-radius: 3px 3px 0 0; min-height: 4px; transition: height .3s ease; }
+.bar-xhs { background: #F53F3F; }
+.bar-dy { background: #1D2129; }
+.bar-all { background: #165DFF; }
+.bar-day { font-size: 9px; color: #86909c; }
+.bar-val { font-size: 9px; color: #4e5969; font-weight: 500; }
+.pcomp-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.pcomp-name { font-size: 12px; font-weight: 600; min-width: 55px; }
+.pcomp-bg { flex: 1; height: 8px; background: #f2f3f5; border-radius: 4px; overflow: hidden; }
+.pcomp-fill { height: 8px; border-radius: 4px; transition: width .4s ease; }
+.pcomp-val { font-size: 12px; font-weight: 600; min-width: 48px; text-align: right; }
+
+/* insurance business data */
+.insurance-row { display:grid; grid-template-columns:var(--data-two-col); gap:12px; margin-bottom:14px; }
+.funnel-card, .product-card { background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:14px; min-width:0; }
+.funnel-steps { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.funnel-step { border:1px solid #e5e6eb; border-radius:8px; padding:10px 12px; background:#fafbfc; position:relative; min-height:74px; }
+.funnel-step::after { content:'>'; position:absolute; right:-7px; top:50%; transform:translateY(-50%); color:#c9cdd4; font-size:12px; font-weight:800; }
+.funnel-step:nth-child(2n)::after { display:none; }
+.funnel-step:last-child::after { display:none; }
+.funnel-label { font-size:11px; color:#86909c; font-weight:700; margin-bottom:6px; }
+.funnel-value { font-size:20px; color:#1d2129; font-weight:800; line-height:1; margin-bottom:5px; }
+.funnel-sub { font-size:10px; color:#165DFF; font-weight:700; line-height:1.4; }
+.product-list { display:flex; flex-direction:column; gap:9px; }
+.product-row { display:grid; grid-template-columns:minmax(0,1fr) 72px 82px; gap:10px; align-items:center; }
+.product-name { font-size:12px; font-weight:800; color:#1d2129; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.product-sub { font-size:10px; color:#86909c; }
+.product-bar-bg { height:7px; background:#f2f3f5; border-radius:4px; overflow:hidden; margin-top:6px; }
+.product-bar-fill { height:7px; border-radius:4px; background:#165DFF; }
+.product-num { font-size:12px; font-weight:800; color:#1d2129; text-align:right; }
+.product-premium { font-size:12px; color:#f53f3f; font-weight:800; text-align:right; }
+
+/* peer section */
+.peer-section { background: #fff; border: 1px solid #e5e6eb; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.peer-sec-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.peer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.peer-card {
+  background: #f7f8fa; border: 1px solid #e5e6eb; border-radius: 10px;
+  padding: 12px; cursor: pointer; transition: all .15s;
+}
+.peer-card:hover { border-color: #165DFF; background: #e8f3ff; box-shadow: 0 0 0 3px rgba(22,93,255,.06); }
+.peer-rank-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #ffece8; color: #f53f3f;
+  font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.peer-card-title { font-size: 12px; font-weight: 700; line-height: 1.45; margin-bottom: 5px; }
+.peer-card-meta { font-size: 11px; color: #86909c; margin-bottom: 8px; }
+.peer-card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+.peer-card-tag {
+  font-size: 10px; padding: 2px 7px; border-radius: 10px;
+  background: #e8f3ff; color: #165DFF; font-weight: 500;
+}
+.peer-card-tip { font-size: 10px; color: #86909c; }
+.peer-actions { display: flex; gap: 6px; margin-top: 8px; }
+
+/* content table */
+.data-table-section { background: #fff; border: 1px solid #e5e6eb; border-radius: 10px; padding: 14px; }
+.data-table-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.data-table-hdr-title { font-size: 13px; font-weight: 700; }
+.data-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.data-table th {
+  font-size: 11px; font-weight: 600; color: #86909c;
+  padding: 7px 10px; text-align: left;
+  border-bottom: 1px solid #e5e6eb; letter-spacing: .03em;
+}
+.data-table td { font-size: 12px; padding: 10px 10px; border-bottom: 1px solid #f2f3f5; vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: #f7f8fa; }
+.status-hot { display: inline-flex; align-items: center; gap: 3px; background: #fff0f0; color: #f53f3f; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.status-good { display: inline-flex; align-items: center; gap: 3px; background: #e8ffea; color: #00b42a; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.status-norm { display: inline-flex; align-items: center; gap: 3px; background: #f2f3f5; color: #86909c; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+.plat-tag-xhs { background: #fff0f0; color: #f53f3f; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.plat-tag-dy  { background: #f2f3f5; color: #1d2129; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.imitate-btn {
+  font-size: 11px; color: #165DFF; cursor: pointer;
+  background: none; border: none; font-family: inherit; padding: 0;
+}
+.imitate-btn:hover { text-decoration: underline; }
+
+/* ── Modals ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15,23,42,.35);
+  z-index: 900; display: flex; align-items: center; justify-content: center; padding: 24px;
+  animation: fadeIn .15s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-card {
+  background: #fff; border-radius: 12px; border: 1px solid #e5e6eb;
+  box-shadow: 0 18px 50px rgba(15,23,42,.18); overflow: hidden; animation: scaleIn .2s ease;
+}
+@keyframes scaleIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+.modal-head {
+  padding: 14px 18px; border-bottom: 1px solid #e5e6eb;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.modal-close {
+  margin-left: auto; border: none; background: #f2f3f5;
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; color: #86909c; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.modal-close:hover { background: #e5e6eb; }
+.modal-body { padding: 14px 18px; }
+.modal-footer { padding: 12px 18px; border-top: 1px solid #e5e6eb; display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── Viral float card ── */
+.viral-float {
+  position: fixed; bottom: 24px; right: 24px; width: 320px;
+  background: #fff; border: 1px solid #e5e6eb; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.14); z-index: 800; overflow: hidden;
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.viral-float-head {
+  padding: 10px 14px; border-bottom: 1px solid #e5e6eb;
+  background: linear-gradient(90deg, #fff7e8, #fff);
+  display: flex; align-items: center; gap: 8px;
+}
+.viral-float-body { padding: 12px 14px; }
+.viral-float-foot { padding: 10px 14px; border-top: 1px solid #e5e6eb; display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── Placeholder page ── */
+.placeholder-page {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px; background: #f7f8fa;
+}
+.workbench-strip { display:flex; gap:8px; flex-wrap:wrap; margin:-12px 0 18px; }
+.workbench-chip { background:#fff; border:1px solid #e5e6eb; border-radius:8px; padding:8px 11px; font-size:12px; color:#4e5969; display:flex; align-items:center; gap:6px; font-weight:600; cursor:pointer; transition:all .12s; }
+.workbench-chip:hover { border-color:#165DFF; color:#165DFF; background:#e8f3ff; }
+.mode-helper { padding:8px 12px; border-bottom:1px solid #f2f3f5; display:flex; align-items:center; gap:8px; background:#fafbfc; font-size:11px; color:#4e5969; }
+.mode-helper-tag { padding:2px 7px; border-radius:10px; font-size:10px; font-weight:700; background:#e8f3ff; color:#165DFF; }
+.embedded-panel { padding:10px 12px; border-bottom:1px solid #f2f3f5; background:#fff; }
+.embedded-panel-title { font-size:11px; color:#86909c; font-weight:800; margin-bottom:8px; letter-spacing:.02em; }
+.embedded-chip-row { display:flex; gap:6px; flex-wrap:wrap; }
+.embedded-chip { height:28px; padding:0 10px; border-radius:14px; border:1px solid #e5e6eb; background:#fff; color:#4e5969; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; }
+.embedded-chip:hover { border-color:#165DFF; color:#165DFF; background:#e8f3ff; }
+.persona-config-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.persona-config-card { border:1px solid #e5e6eb; border-radius:8px; padding:9px 10px; background:#fafbfc; min-height:66px; }
+.persona-config-label { font-size:10px; color:#86909c; font-weight:800; margin-bottom:5px; }
+.persona-config-value { font-size:12px; color:#1d2129; line-height:1.5; font-weight:600; }
+.url-learn-row { margin-top:8px; display:flex; gap:6px; align-items:center; }
+.url-learn-input { flex:1; height:30px; border:1px solid #e5e6eb; border-radius:7px; padding:0 10px; font-size:11px; outline:none; font-family:inherit; }
+.url-learn-input:focus { border-color:#165DFF; }
+.speech-card-row { padding:10px 14px; border-top:1px solid #f2f3f5; background:#fafbfc; }
+.speech-card-title { font-size:11px; color:#86909c; font-weight:800; margin-bottom:8px; }
+.speech-card-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.speech-card { min-height:30px; padding:0 9px; border-radius:7px; border:1px solid #e5e6eb; background:#fff; color:#4e5969; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; white-space:normal; line-height:1.3; }
+.speech-card:hover { border-color:#165DFF; color:#165DFF; background:#e8f3ff; }
+.intent-detail { padding:8px 14px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; border-bottom:1px solid #f2f3f5; background:#fff; }
+.intent-detail-title { font-size:11px; color:#86909c; font-weight:700; }
+.intent-score-chip { font-size:10px; padding:2px 7px; border-radius:10px; background:#f2f3f5; color:#4e5969; font-weight:600; }
+.wake-gradient { display:flex; gap:6px; align-items:center; font-size:11px; color:#86909c; padding:8px 14px; border-bottom:1px solid #f2f3f5; background:#fff7e8; }
+.wake-step { padding:3px 8px; border-radius:12px; background:#fff; border:1px solid #ffd591; color:#874d00; font-weight:700; }
+
+/* ── 潜客公海池 / 跟进任务 ── */
+.ops-page { flex:1; overflow-y:auto; padding:20px 24px; background:#f7f8fa; }
+.ops-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.ops-title { font-size:16px; font-weight:800; color:#1d2129; }
+.ops-sub { font-size:12px; color:#86909c; margin-top:3px; }
+.ops-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+.ops-kpi { background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:12px 14px; }
+.ops-kpi-label { font-size:11px; color:#86909c; margin-bottom:5px; }
+.ops-kpi-val { font-size:22px; font-weight:800; color:#1d2129; }
+.pool-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.pool-card, .task-card { background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:14px; transition:all .15s; }
+.pool-card:hover, .task-card:hover { border-color:#165DFF; box-shadow:0 0 0 3px rgba(22,93,255,.06); }
+.pool-card-top { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; }
+.pool-avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; }
+.pool-name { font-size:14px; font-weight:800; margin-bottom:3px; }
+.pool-meta { font-size:11px; color:#86909c; line-height:1.5; }
+.pool-tags { display:flex; gap:5px; flex-wrap:wrap; margin:8px 0; }
+.pool-tag { font-size:10px; padding:2px 7px; border-radius:10px; font-weight:700; background:#e8f3ff; color:#165DFF; }
+.pool-tag.red { background:#fff0f0; color:#f53f3f; }
+.pool-tag.green { background:#e8ffea; color:#00b42a; }
+.pool-tag.gray { background:#f2f3f5; color:#86909c; }
+.pool-path { background:#f7f8fa; border-radius:8px; padding:8px 10px; font-size:11px; color:#4e5969; line-height:1.7; margin-bottom:10px; }
+.pool-actions { display:flex; gap:7px; align-items:center; }
+.primary-mini { height:30px; padding:0 12px; border:none; border-radius:7px; background:#165DFF; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.secondary-mini { height:30px; padding:0 12px; border:1px solid #e5e6eb; border-radius:7px; background:#fff; color:#4e5969; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
+.task-lanes { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.task-lane { background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:12px; min-height:360px; }
+.task-lane-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; font-size:13px; font-weight:800; }
+.task-card { margin-bottom:10px; padding:12px; }
+.task-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px; }
+.task-name { font-size:13px; font-weight:700; }
+.task-desc { font-size:11px; color:#86909c; line-height:1.6; margin-bottom:8px; }
+.task-badge { font-size:10px; padding:2px 7px; border-radius:10px; background:#fff7e8; color:#ff7d00; font-weight:700; }
+
+/* ── Arco overrides ── */
+.arco-btn-primary { background: #165DFF !important; border-color: #165DFF !important; }
+.arco-btn-primary:hover { background: #0e42d2 !important; border-color: #0e42d2 !important; }
+.arco-tag-blue { background: #e8f3ff !important; color: #165DFF !important; border-color: #bcd1ff !important; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c9cdd4; border-radius: 2px; }
+
+/* ── 消息收件箱 ── */
+.inbox-layout { display:flex; flex:1; overflow:hidden; }
+.inbox-list { width:280px; flex-shrink:0; border-right:1px solid #e5e6eb; background:#fff; display:flex; flex-direction:column; overflow:hidden; }
+.inbox-list-head { padding:12px 14px; border-bottom:1px solid #e5e6eb; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.inbox-filter { display:flex; gap:4px; padding:8px 10px; border-bottom:1px solid #f2f3f5; flex-shrink:0; }
+.inbox-filter-chip { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:500; cursor:pointer; border:1px solid #e5e6eb; background:#fff; color:#4e5969; transition:all .12s; }
+.inbox-filter-chip.active { background:#165DFF; color:#fff; border-color:#165DFF; }
+.inbox-conv-list { flex:1; overflow-y:auto; }
+.inbox-conv-item { padding:9px 14px; border-bottom:1px solid #f2f3f5; cursor:pointer; transition:background .1s; }
+.inbox-conv-item:hover { background:#f7f8fa; }
+.inbox-conv-item.active { background:#e8f3ff; }
+.inbox-conv-top { display:flex; align-items:flex-start; gap:8px; margin-bottom:0; }
+.inbox-conv-av { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; font-weight:700; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(22,93,255,.08); }
+.inbox-avatar-img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
+.inbox-conv-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.inbox-conv-name-line { display:flex; align-items:center; min-width:0; }
+.inbox-conv-name { font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.inbox-platform-tag { font-size:9px; padding:2px 6px; border-radius:8px; background:#f2f3f5; font-weight:700; flex-shrink:0; }
+.inbox-conv-time { font-size:10px; color:#86909c; flex-shrink:0; }
+.inbox-conv-preview { font-size:11px; color:#86909c; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:0; margin-top:0; line-height:1.35; }
+.inbox-conv-badges { display:flex; gap:4px; flex-wrap:wrap; padding-left:0; margin-top:1px; }
+.intent-badge { font-size:9px; padding:2px 6px; border-radius:8px; font-weight:700; }
+.intent-high { background:#fff0f0; color:#f53f3f; }
+.intent-mid  { background:#e8f3ff; color:#165DFF; }
+.intent-low  { background:#f2f3f5; color:#86909c; }
+.wake-badge { font-size:9px; padding:2px 6px; border-radius:8px; font-weight:600; background:#fff7e8; color:#ff7d00; }
+/* 会话区域 */
+.inbox-thread { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#f7f8fa; }
+.inbox-thread-head { padding:12px 16px; background:#fff; border-bottom:1px solid #e5e6eb; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.inbox-msgs { flex:1; overflow-y:auto; padding:14px 20px; }
+.inbox-msg-item { display:flex; gap:6px; margin-bottom:12px; align-items:flex-start; }
+.inbox-msg-item.self { flex-direction:row-reverse; }
+.inbox-msg-av { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(22,93,255,.08); }
+.inbox-msg-content { display:flex; flex-direction:column; align-items:flex-start; max-width:72%; }
+.inbox-msg-item.self .inbox-msg-content { align-items:flex-end; }
+.inbox-msg-bubble { border-radius:12px; padding:9px 13px; font-size:13px; line-height:1.75; max-width:100%; }
+.inbox-msg-bubble.other { background:#fff; border:1px solid #e5e6eb; }
+.inbox-msg-bubble.self  { background:#165DFF; color:#fff; }
+.inbox-msg-time { font-size:10px; color:#c9cdd4; margin-top:3px; padding:0 4px; }
+/* AI 回复面板 */
+.inbox-ai-panel { background:#fff; border-top:1px solid #e5e6eb; flex-shrink:0; max-height:340px; display:flex; flex-direction:column; overflow:hidden; }
+.inbox-ai-scroll { flex:0 1 auto; overflow-y:auto; min-height:0; }
+.inbox-ai-panel-head { padding:10px 14px; border-bottom:1px solid #f2f3f5; display:flex; align-items:center; gap:8px; background:#fafbfc; }
+.inbox-ai-reply-box { padding:10px 14px; border-bottom:1px solid #f2f3f5; }
+.inbox-ai-reply-text { font-size:13px; line-height:1.75; color:#1d2129; background:#f7f8fa; border-radius:8px; padding:10px 12px; }
+.think-panel { margin:0 14px 10px; background:#e8f3ff; border-radius:8px; padding:11px 13px; border-left:3px solid #165DFF; }
+.think-panel-label { font-size:11px; font-weight:700; color:#165DFF; margin-bottom:7px; display:flex; align-items:center; justify-content:space-between; }
+.think-row { font-size:12px; color:#1d5bd8; line-height:1.7; margin-bottom:3px; }
+.inbox-quick-actions { padding:10px 14px; display:flex; gap:7px; flex-wrap:wrap; align-items:center; border-top:1px solid #e5e6eb; background:#fff; flex-shrink:0; box-shadow:0 -4px 12px rgba(15,23,42,.04); }
+.inbox-qa-btn { height:30px; padding:'0 12px'; border-radius:7px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid #e5e6eb; background:#fff; color:#4e5969; font-family:inherit; transition:all .12s; display:flex; align-items:center; gap:4px; padding:0 10px; }
+.inbox-qa-btn:hover { border-color:#165DFF; color:#165DFF; }
+.inbox-qa-btn.primary { background:#165DFF; color:#fff; border-color:#165DFF; }
+.inbox-qa-btn.primary:hover { background:#0e42d2; }
+.inbox-qa-btn.disabled { opacity:.45; cursor:not-allowed; }
+.inbox-qa-btn.disabled:hover { border-color:#e5e6eb; color:#4e5969; }
+.score-bar-wrap { display:flex; align-items:center; gap:6px; white-space:nowrap; flex-shrink:0; font-size:11px; }
+.score-card { min-width:150px; padding:8px 10px; border:1px solid #ffe4e4; border-radius:12px; background:linear-gradient(135deg,#fff 0%,#fff7f7 100%); box-shadow:0 4px 12px rgba(245,63,63,.06); }
+.score-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-size:11px; color:#86909c; }
+.score-card-value { font-size:18px; font-weight:800; color:#f53f3f; line-height:1; }
+.score-bar-bg { width:72px; flex-shrink:0; height:7px; background:#f2f3f5; border-radius:999px; overflow:hidden; }
+.score-bar-fill { height:7px; border-radius:999px; background:linear-gradient(90deg,#ff7d00,#f53f3f); }
+.score-bar-value { font-weight:800; line-height:1; min-width:18px; text-align:right; }
+.score-card-sub { margin-top:5px; font-size:10px; color:#f53f3f; font-weight:600; text-align:right; }
+
+/* ── 发布管理 ── */
+.pub-layout { flex:1; overflow-y:auto; padding:20px 24px; background:#f7f8fa; }
+.pub-tabs { display:flex; background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:4px; gap:4px; width:fit-content; margin-bottom:16px; }
+.pub-tab { padding:6px 20px; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; color:#4e5969; transition:all .12s; }
+.pub-tab.active { background:#165DFF; color:#fff; font-weight:600; }
+.risk-banner { background:#fff7e8; border:1px solid #ffd591; border-radius:8px; padding:10px 14px; display:flex; align-items:flex-start; gap:10px; margin-bottom:16px; font-size:12px; line-height:1.65; color:#874d00; }
+.accts-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+.acct-card { background:#fff; border:1.5px solid #e5e6eb; border-radius:10px; padding:13px; display:flex; flex-direction:column; gap:8px; transition:all .15s; cursor:pointer; }
+.acct-card:hover { border-color:#165DFF; }
+.acct-card.selected { border-color:#165DFF; background:#e8f3ff; }
+.acct-card-top { display:flex; align-items:center; gap:8px; }
+.acct-plat-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.acct-cert-badge { font-size:9px; padding:2px 6px; border-radius:8px; font-weight:700; display:inline-flex; align-items:center; gap:2px; }
+.cert-ok    { background:#e8ffea; color:#00b42a; }
+.cert-none  { background:#f2f3f5; color:#86909c; }
+.cert-risk  { background:#fff0f0; color:#f53f3f; }
+.queue-card { background:#fff; border:1px solid #e5e6eb; border-radius:10px; overflow:hidden; margin-bottom:10px; }
+.queue-card-head { padding:12px 14px; border-bottom:1px solid #f2f3f5; display:flex; align-items:flex-start; gap:10px; }
+.queue-platform-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.queue-card-body { padding:10px 14px; display:flex; align-items:center; gap:10px; }
+.queue-time-badge { font-size:11px; padding:3px 9px; border-radius:6px; font-weight:600; }
+.time-scheduled { background:#e8f3ff; color:#165DFF; }
+.time-draft { background:#f2f3f5; color:#86909c; }
+.time-sending { background:#e8ffea; color:#00b42a; }
+.mass-send-area { background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:16px; }
+.mass-target-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.mass-chip { padding:5px 12px; border-radius:20px; font-size:12px; cursor:pointer; border:1.5px solid #e5e6eb; background:#fff; color:#4e5969; font-weight:500; transition:all .12s; }
+.mass-chip.active { background:#165DFF; color:#fff; border-color:#165DFF; }
+
+/* ── 智能体中心 ── */
+.agent-layout { flex:1; overflow-y:auto; padding:24px; background:#f7f8fa; }
+.agent-wrap { width:min(960px,100%); margin:0 auto; }
+.agent-head { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.agent-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.agent-card { background:#fff; border:1px solid #e5e6eb; border-radius:12px; padding:18px; transition:all .15s; cursor:pointer; position:relative; overflow:hidden; }
+.agent-card:hover { border-color:#165DFF; box-shadow:0 0 0 3px rgba(22,93,255,.07); }
+.agent-card.new-card { border:2px dashed #c9cdd4; background:#f7f8fa; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:220px; }
+.agent-card.new-card:hover { border-color:#165DFF; background:#e8f3ff; }
+.agent-card-hd { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+.agent-emoji { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+.agent-name { font-size:15px; font-weight:700; margin-bottom:3px; }
+.agent-role { font-size:11px; color:#86909c; }
+.agent-badge-active { position:absolute; top:12px; right:12px; font-size:10px; background:#e8ffea; color:#00b42a; padding:2px 8px; border-radius:10px; font-weight:600; }
+.agent-badge-idle   { position:absolute; top:12px; right:12px; font-size:10px; background:#f2f3f5; color:#86909c; padding:2px 8px; border-radius:10px; font-weight:500; }
+.agent-desc { font-size:12px; color:#4e5969; line-height:1.7; margin-bottom:12px; }
+.agent-plats { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
+.agent-plat-tag { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:600; }
+.agent-stat-row { display:flex; gap:14px; font-size:11px; color:#86909c; padding-top:10px; border-top:1px solid #f2f3f5; margin-bottom:12px; }
+.agent-actions { display:flex; gap:7px; }
+.agent-act-btn { flex:1; height:30px; border-radius:7px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid #e5e6eb; background:#fff; color:#4e5969; font-family:inherit; transition:all .12s; }
+.agent-act-btn:hover { border-color:#165DFF; color:#165DFF; }
+.agent-act-btn.primary { background:#165DFF; color:#fff; border-color:#165DFF; }
+.agent-act-btn.primary:hover { background:#0e42d2; }
+/* config drawer */
+.agent-drawer { position:fixed; top:0; right:0; width:440px; height:100vh; background:#fff; border-left:1px solid #e5e6eb; z-index:500; box-shadow:-8px 0 24px rgba(0,0,0,.08); display:flex; flex-direction:column; animation:drawerIn .2s ease; }
+@keyframes drawerIn { from { transform:translateX(100%); } to { transform:none; } }
+.drawer-head { padding:16px 20px; border-bottom:1px solid #e5e6eb; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.drawer-body { flex:1; overflow-y:auto; padding:16px 20px; }
+.drawer-foot { padding:14px 20px; border-top:1px solid #e5e6eb; display:flex; gap:8px; justify-content:flex-end; flex-shrink:0; }
+.field-label { font-size:12px; font-weight:600; color:#1d2129; margin-bottom:6px; }
+.field-input { width:100%; border:1.5px solid #c9cdd4; border-radius:7px; padding:8px 10px; font-size:13px; font-family:inherit; outline:none; transition:border-color .15s; }
+.field-input:focus { border-color:#165DFF; }
+.field-ta { width:100%; border:1.5px solid #c9cdd4; border-radius:7px; padding:8px 10px; font-size:13px; font-family:inherit; outline:none; resize:none; height:80px; line-height:1.6; transition:border-color .15s; }
+.field-ta:focus { border-color:#165DFF; }
+.field-block { margin-bottom:14px; }
+
+/* ── 写作模板 ── */
+.tpl-layout { display:flex; flex:1; overflow:hidden; }
+.tpl-cats { width:160px; flex-shrink:0; border-right:1px solid #e5e6eb; background:#fff; padding:14px 0; overflow-y:auto; }
+.tpl-cat-label { font-size:10px; font-weight:700; color:#86909c; letter-spacing:.04em; padding:6px 16px 4px; }
+.tpl-cat-item { padding:8px 16px; font-size:13px; cursor:pointer; color:#4e5969; border-left:3px solid transparent; transition:all .12s; font-weight:500; }
+.tpl-cat-item:hover { background:#f7f8fa; }
+.tpl-cat-item.active { background:#e8f3ff; color:#165DFF; border-left-color:#165DFF; font-weight:600; }
+.tpl-cat-count { float:right; font-size:10px; background:#f2f3f5; color:#86909c; padding:1px 6px; border-radius:10px; font-weight:500; }
+.tpl-main { flex:1; padding:20px; overflow-y:auto; background:#f7f8fa; }
+.tpl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.tpl-card { background:#fff; border:1px solid #e5e6eb; border-radius:10px; overflow:hidden; transition:all .15s; cursor:pointer; }
+.tpl-card:hover { border-color:#165DFF; box-shadow:0 0 0 3px rgba(22,93,255,.06); transform:translateY(-1px); }
+.tpl-card-head { height:8px; }
+.tpl-card-body { padding:12px 13px; }
+.tpl-card-title { font-size:13px; font-weight:700; margin-bottom:6px; }
+.tpl-card-preview { font-size:12px; color:#86909c; line-height:1.7; height:60px; overflow:hidden; position:relative; }
+.tpl-card-preview::after { content:''; position:absolute; bottom:0; left:0; right:0; height:20px; background:linear-gradient(transparent,#fff); }
+.tpl-card-footer { padding:9px 13px; border-top:1px solid #f2f3f5; display:flex; align-items:center; gap:5px; }
+.tpl-tags-row { display:flex; gap:4px; flex-wrap:wrap; flex:1; }
+.tpl-tag { font-size:10px; padding:2px 7px; border-radius:10px; background:#f2f3f5; color:#4e5969; font-weight:500; }
+.tpl-use-btn { font-size:11px; font-weight:600; color:#165DFF; background:none; border:none; cursor:pointer; font-family:inherit; padding:0; white-space:nowrap; }
+
+/* ── AI生图 ── */
+.aigen-layout { display:flex; flex:1; overflow:hidden; }
+.aigen-left { width:280px; flex-shrink:0; border-right:1px solid #e5e6eb; background:#fff; display:flex; flex-direction:column; overflow:hidden; }
+.aigen-left-scroll { flex:1; overflow-y:auto; padding:16px; }
+.aigen-label { font-size:11px; font-weight:700; color:#86909c; letter-spacing:.04em; margin-bottom:8px; }
+.aigen-prompt { width:100%; border:1.5px solid #c9cdd4; border-radius:8px; padding:9px 11px; font-size:12px; font-family:inherit; resize:none; height:80px; outline:none; line-height:1.6; transition:border-color .15s; }
+.aigen-prompt:focus { border-color:#165DFF; }
+.style-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.style-chip { padding:5px 12px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer; border:1.5px solid #e5e6eb; background:#fff; color:#4e5969; transition:all .12s; }
+.style-chip.active { background:#165DFF; color:#fff; border-color:#165DFF; }
+.ratio-chips { display:flex; gap:6px; }
+.ratio-chip { width:52px; height:36px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; border:1.5px solid #e5e6eb; background:#fff; font-size:10px; font-weight:600; color:#4e5969; transition:all .12s; }
+.ratio-chip.active { border-color:#165DFF; background:#e8f3ff; color:#165DFF; }
+.ratio-icon { font-size:14px; line-height:1; }
+.scene-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.scene-btn { padding:7px 6px; border-radius:7px; font-size:11px; font-weight:500; cursor:pointer; border:1px solid #e5e6eb; background:#fff; color:#4e5969; transition:all .12s; text-align:center; font-family:inherit; }
+.scene-btn:hover { border-color:#165DFF; color:#165DFF; background:#e8f3ff; }
+.quality-slider { flex:1; height:4px; border:none; outline:none; box-shadow:none; accent-color:#165DFF; }
+.quality-slider:focus { outline:none; box-shadow:none; }
+.quality-slider:focus-visible { outline:none; box-shadow:none; }
+.gen-btn { margin:14px 16px; height:40px; background:#165DFF; color:#fff; border:none; border-radius:9px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; flex-shrink:0; display:flex; align-items:center; justify-content:center; gap:7px; }
+.gen-btn:hover { background:#0e42d2; }
+.gen-btn:disabled { background:#c9cdd4; cursor:not-allowed; }
+.aigen-right { flex:1; background:#f7f8fa; padding:20px; overflow-y:auto; }
+.aigen-empty-icon { width:76px; height:76px; object-fit:contain; display:block; filter:drop-shadow(0 10px 18px rgba(22,93,255,.14)); }
+.img-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:640px; }
+.img-card { background:#fff; border:1px solid #e5e6eb; border-radius:10px; overflow:hidden; }
+.img-thumb { height:200px; display:flex; align-items:center; justify-content:center; position:relative; font-size:44px; }
+.img-thumb-overlay { position:absolute; inset:0; background:rgba(0,0,0,.03); }
+.img-card-actions { padding:9px 10px; border-top:1px solid #f2f3f5; display:flex; gap:5px; }
+.img-act-btn { flex:1; height:26px; border-radius:6px; font-size:11px; font-weight:500; cursor:pointer; border:1px solid #e5e6eb; background:#fff; color:#4e5969; font-family:inherit; transition:all .12s; }
+.img-act-btn:hover { border-color:#165DFF; color:#165DFF; }
+.img-act-btn.primary { background:#165DFF; color:#fff; border-color:#165DFF; }
+.img-act-btn.primary:hover { background:#0e42d2; }
+.img-loading { display:flex; align-items:center; justify-content:center; height:200px; color:#86909c; font-size:13px; gap:8px; flex-direction:column; }
+
+/* ── 选题广场 ── */
+.topic-layout { display:flex; flex:1; overflow:hidden; flex-direction:column; background:#f7f8fa; }
+.topic-subtabs { background:#fff; border-bottom:1px solid #e5e6eb; display:flex; padding:0 20px; flex-shrink:0; height:42px; align-items:stretch; gap:2px; }
+.topic-subtab { padding:0 16px; font-size:13px; font-weight:500; color:#86909c; cursor:pointer; border-bottom:2px solid transparent; display:flex; align-items:center; gap:5px; transition:all .12s; }
+.topic-subtab.active { color:#165DFF; border-bottom-color:#165DFF; font-weight:600; }
+.topic-subtab:hover:not(.active) { color:#1d2129; }
+.topic-body { flex:1; overflow-y:auto; padding:20px; }
+/* 行业热点 */
+.hot-list { width:min(960px,100%); margin:0 auto; }
+.hot-head { position:sticky; top:0; z-index:8; display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; padding:8px 0 10px; background:rgba(247,248,250,.94); backdrop-filter:blur(8px); }
+.hot-head-meta { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; font-size:11px; color:#86909c; text-align:right; }
+.hot-update-chip { display:inline-flex; align-items:center; height:22px; padding:0 8px; border-radius:999px; background:#e8f3ff; color:#165DFF; font-weight:700; }
+.hot-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.hot-item { background:#fff; border:1px solid #e5e6eb; border-radius:10px; padding:14px 16px; display:grid; grid-template-columns:28px minmax(0,1fr); align-items:flex-start; gap:12px; transition:all .15s; min-height:150px; }
+.hot-item:hover { border-color:#165DFF; box-shadow:0 0 0 3px rgba(22,93,255,.06); }
+.hot-rank { width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; margin-top:2px; }
+.hot-rank.r1 { background:#fff0e8; color:#f53f3f; }
+.hot-rank.r2 { background:#fff7e0; color:#ff7d00; }
+.hot-rank.r3 { background:#e8ffe8; color:#00b42a; }
+.hot-rank.rn { background:#f2f3f5; color:#86909c; }
+.hot-info { flex:1; min-width:0; }
+.hot-title { font-size:14px; font-weight:700; margin-bottom:6px; line-height:1.45; }
+.hot-tags { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:7px; }
+.hot-tag { font-size:10px; padding:2px 7px; border-radius:10px; background:#f2f3f5; color:#4e5969; font-weight:500; }
+.hot-meta { display:flex; align-items:center; gap:10px; font-size:11px; color:#86909c; flex-wrap:wrap; }
+.hot-meta-item { display:flex; align-items:center; gap:3px; }
+.hot-trend-up { color:#f53f3f; font-weight:700; }
+.hot-actions { grid-column:2; display:flex; align-items:center; gap:8px; margin-top:10px; }
+/* 灵感岛 */
+.inspi-wrap { width:min(1040px,100%); margin:0 auto; }
+.inspi-sticky-head { position:sticky; top:0; z-index:8; padding:8px 0 10px; margin-bottom:14px; background:rgba(247,248,250,.94); backdrop-filter:blur(8px); }
+.inspi-titlebar { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.inspi-subtabs { display:flex; gap:6px; }
+.inspi-stab { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid #e5e6eb; background:#fff; color:#4e5969; transition:all .12s; }
+.inspi-stab.active { background:#165DFF; color:#fff; border-color:#165DFF; }
+.inspi-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; align-items:start; }
+.inspi-col { display:flex; flex-direction:column; gap:14px; min-width:0; }
+.inspi-card { width:100%; background:#fff; border:1px solid #e5e6eb; border-radius:10px; overflow:hidden; cursor:pointer; transition:all .15s; }
+.inspi-card:hover { border-color:#165DFF; box-shadow:0 0 0 3px rgba(22,93,255,.06); transform:translateY(-1px); }
+.inspi-thumb { height:110px; display:flex; align-items:center; justify-content:center; font-size:32px; position:relative; overflow:hidden; }
+.inspi-thumb-overlay { position:absolute; inset:0; background:rgba(0,0,0,.03); }
+.inspi-body { padding:9px 10px; }
+.inspi-title { font-size:12px; font-weight:600; line-height:1.4; margin-bottom:4px; }
+.inspi-sub { font-size:10px; color:#86909c; }
+.inspi-footer { display:flex; align-items:center; gap:5px; padding:7px 10px; border-top:1px solid #f2f3f5; }
+.inspi-stat { font-size:10px; color:#86909c; flex:1; }
+.inspi-use-btn { font-size:11px; color:#165DFF; background:none; border:none; cursor:pointer; font-family:inherit; font-weight:600; padding:0; }
+.inspi-use-btn:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="vendor/react.development.js"></script>
+<script src="vendor/react-dom.development.js"></script>
+<script src="vendor/babel.min.js"></script>
+
+<script type="text/babel">
+/* eslint-disable */
+const { useState, useEffect, useRef } = React;
+
+// ═══════════════════════════════════════════════
+//  MOCK DATA
+// ═══════════════════════════════════════════════
+
+const PERSONAS = [
+  { id: 'pro',    name: '职场专业女性', emoji: '👩‍💼', photo: '图片素材/头像素材/职场专业女性.png', desc: '干练知性风' },
+  { id: 'young',  name: '年轻理财达人', emoji: '💁‍♀️', photo: '图片素材/头像素材/年轻理财达人.png', desc: '时尚活泼风' },
+  { id: 'senior', name: '成熟顾问男性', emoji: '👨‍💼', photo: '图片素材/头像素材/成熟顾问男性.png', desc: '稳重可信风' },
+  { id: 'chart',  name: '产品介绍团队', emoji: '📊',   photo: '图片素材/头像素材/产品介绍团队.webp', desc: '数据图表风' },
+];
+
+const QUICK_TASKS = [
+  { icon: 'assets/quick-icons/quick-copy.png', label: 'AI文案',    sub: '结合热点+产品卖点', prompt: '帮我写一篇关于年金险的小红书种草笔记，结合最近降息热点，目标人群30-40岁有孩子的妈妈' },
+  { icon: 'assets/quick-icons/quick-video.png', label: 'AI口播',    sub: '15s / 30s / 60s',   prompt: '帮我写一个30秒抖音口播脚本，主题是年金险锁定利率优势，开场要有强钩子，结尾引导私信' },
+  { icon: 'assets/quick-icons/quick-title.png', label: 'AI爆款标题', sub: '10条+点击率评级',   prompt: '帮我生成10个爆款标题，主题年金险，数字型/疑问型/共鸣型三种风格各至少3条，并给出点击率预估' },
+  { icon: 'assets/quick-icons/quick-remix.png', label: '爆款复刻',  sub: '同行结构→仿写',     prompt: '请帮我复刻一篇同行爆款内容：提取标题钩子、正文结构、情绪节奏和转化点，并改写成适合年金险·蛮好的人生的版本' },
+  { icon: 'assets/quick-icons/quick-polish.png', label: 'AI改写润色', sub: '口语/专业/压缩',    prompt: '帮我把这段文案改写得更口语化，更适合小红书风格：年金险是一种长期储蓄型保险产品，具有锁定收益和复利增值的特点。' },
+  { icon: 'assets/quick-icons/quick-compliance.png', label: 'AI合规检测', sub: '违禁词+替代方案',  prompt: '请检测以下文案是否合规，并给出修改建议：这款年金险保证年化收益3.5%，绝对保本，比银行存款强10倍，买了稳赚不赔。' },
+  { icon: 'assets/quick-icons/quick-calendar.png', label: 'AI内容日历', sub: '7天 / 30天计划',   prompt: '帮我规划一个30天的内容日历，主题年金险，保证每天内容角度不重复，包含热点借势/知识分享/人设故事三类' },
+  { icon: 'assets/quick-icons/quick-plan.png', label: '发企微计划书', sub: '利益演示+企微承接', prompt: '帮我生成一段企微计划书发送话术，客户刚咨询养老年金，语气要专业、轻柔，并提醒先看利益演示后再进入投保链接' },
+];
+
+const AI_REPLY = `好的！以下是一篇结合降息热点的小红书种草笔记👇
+
+**📌《存款利率又降了，这件事我三年前就做对了》**
+
+最近银行存款利率一降再降，身边很多朋友开始慌了——
+
+钱放银行越来越不划算，基金又涨涨跌跌睡不好觉，到底怎么办？
+
+其实三年前，我就给家里配了一份年金险，现在回头看，那是我做过最明智的财务决定之一 ☁️
+
+👉 **为什么说现在是窗口期？**
+✅ 锁定当前利率，不受后续降息影响
+✅ 复利增值，时间越长优势越明显
+✅ 专款专用，教育金/养老金有保障
+
+宝子们，利率窗口可能真的不多了，想了解的可以私信我 🔒
+
+#年金险 #理财规划 #存款利率下降怎么办 #家庭保险`;
+
+const AI_THINK = {
+  stage: '内容生产阶段',
+  signal: '热点借势需求 + 小红书种草风格',
+  action: '结合「降息」热点切入 → 个人故事建立可信度 → 产品价值输出 → 私信引导转化',
+  rule: '避免承诺固定收益率数字，已规避「绝对保本」等违禁词',
+};
+
+const DATA_ACCOUNTS = [
+  { id: 'all',     name: '全部账号汇总',   sub: '4个账号合计', dot: '#165DFF' },
+  { id: 'xhs_all', name: '小红书·全部',   sub: '2个账号合计', dot: '#F53F3F', plat: 'xhs' },
+  { id: 'xhs1',    name: '年金险日记',     sub: '小红书 · 2.4万粉', dot: '#F53F3F', plat: 'xhs', indent: true },
+  { id: 'xhs2',    name: '年金险科普',     sub: '小红书 · 8600粉',  dot: '#F53F3F', plat: 'xhs', indent: true },
+  { id: 'dy_all',  name: '抖音·全部',     sub: '1个账号', dot: '#1D2129', plat: 'dy' },
+  { id: 'dy1',     name: '蛮好的人生·阳阳', sub: '抖音 · 1.2万粉',  dot: '#1D2129', plat: 'dy',  indent: true },
+  { id: 'sph1',    name: '视频号-阳阳',   sub: '视频号 · 3200粉', dot: '#00B42A', plat: 'sph' },
+];
+
+const KPI_MAP = {
+  all:     [{ label:'总浏览量', val:'6.8万', chg:'+18.4%', up:true }, { label:'互动量', val:'2,341', chg:'+12.1%', up:true }, { label:'新增粉丝', val:'286', chg:'+9.6%', up:true }, { label:'新增潜客', val:'63', chg:'+21.3%', up:true }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+  xhs_all: [{ label:'总浏览量', val:'4.1万', chg:'+19.8%', up:true }, { label:'互动量', val:'1,540', chg:'+14.3%', up:true }, { label:'新增粉丝', val:'178', chg:'+11.2%', up:true }, { label:'新增潜客', val:'42', chg:'+25.1%', up:true }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+  xhs1:    [{ label:'总浏览量', val:'3.2万', chg:'+22.1%', up:true }, { label:'互动量', val:'1,180', chg:'+15.3%', up:true }, { label:'新增粉丝', val:'142', chg:'+11.4%', up:true }, { label:'新增潜客', val:'34', chg:'+24.7%', up:true }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+  dy_all:  [{ label:'总浏览量', val:'2.1万', chg:'+13.6%', up:true }, { label:'互动量', val:'680', chg:'+8.4%', up:true },  { label:'新增粉丝', val:'82',  chg:'+6.3%', up:true },  { label:'新增潜客', val:'18', chg:'+14.2%', up:true }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+  dy1:     [{ label:'总浏览量', val:'2.1万', chg:'+13.6%', up:true }, { label:'互动量', val:'680', chg:'+8.4%', up:true },  { label:'新增粉丝', val:'82',  chg:'+6.3%', up:true },  { label:'新增潜客', val:'18', chg:'+14.2%', up:true }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+  xhs2:    [{ label:'总浏览量', val:'9,300', chg:'+14.2%', up:true }, { label:'互动量', val:'360', chg:'+11.7%', up:true },  { label:'新增粉丝', val:'36',  chg:'+9.1%', up:true },  { label:'新增潜客', val:'8',  chg:'+18.3%', up:true }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+  sph1:    [{ label:'总浏览量', val:'6,200', chg:'-3.2%', up:false },  { label:'互动量', val:'121', chg:'-5.1%', up:false },  { label:'新增粉丝', val:'26',  chg:'+2.1%', up:true },  { label:'新增潜客', val:'3',  chg:'-8.4%', up:false }, { label:'内容合规率', val:'100%', chg:'持续达标', flat:true }],
+};
+
+const BAR_DATA_SETS = {
+  all:     [68,45,82,55,94,78,100],
+  xhs_all: [55,40,70,48,82,66,88],
+  xhs1:    [42,32,58,36,68,54,72],
+  dy_all:  [18,14,24,16,28,22,30],
+};
+
+const PEER_HOT = [
+  { rank:1, title:'《存款利率跌破2%，普通家庭的钱该怎么放？》', meta:'小红书爆款 · 阅读12.4万 · 互动3,200', plat:'小红书', platTag:'xhs', tags:['降息热点','理财规划','家庭保险'], tip:'3小时前上榜', hook:'降息焦虑 + 数字冲击', struct:'痛点→故事→方案→行动', emotion:'焦虑→安心→信心' },
+  { rank:2, title:'《不懂年金险，退休后可能真的会后悔》',       meta:'抖音热门 · 播放28.6万 · 点赞1.4万',   plat:'抖音',   platTag:'dy',  tags:['养老规划','年金险','情感共鸣'], tip:'5小时前上榜', hook:'后悔情感钩子 + 未来感', struct:'警告→场景→解决方案→引导', emotion:'担忧→共鸣→行动' },
+  { rank:3, title:'《给宝宝买保险，这4件套是刚需》',            meta:'小红书爆款 · 阅读9.1万 · 互动2,800',  plat:'小红书', platTag:'xhs', tags:['宝宝保险','亲子理财','教育金'], tip:'8小时前上榜', hook:'数字 + 刚需定性', struct:'清单式→逐一解析→价值锚定→私信引导', emotion:'责任感→知识认同→信任' },
+];
+
+const CONTENT_TABLE = [
+  { id:1, title:'《存款利率再降！年金险成了家庭利率锁仓器》', plat:'小红书', views:'1.2万', engage:340, leads:28, status:'hot' },
+  { id:2, title:'《买年金险前必须想清楚的3个问题》',           plat:'小红书', views:'8,600', engage:220, leads:15, status:'good' },
+  { id:3, title:'《给父母买年金险先买谁？》',                  plat:'抖音',   views:'2.1万', engage:560, leads:12, status:'good' },
+  { id:4, title:'《月薪5000怎么配置保险？》',                  plat:'抖音',   views:'4,300', engage:142, leads:8,  status:'norm' },
+  { id:5, title:'《年金险利率比银行高多少？真实测算》',         plat:'小红书', views:'6,800', engage:310, leads:19, status:'hot' },
+];
+
+const INSURANCE_FUNNEL = [
+  { label:'新增潜客', value:'63', sub:'内容评论/私信汇总' },
+  { label:'计划书发送', value:'41', sub:'发送率 65.1%' },
+  { label:'计划书打开率', value:'78%', sub:'32 人已查看利益演示' },
+  { label:'投保链接点击', value:'18', sub:'需先看计划书后解锁' },
+  { label:'预估保费', value:'¥42.6万', sub:'按当前意向测算' },
+];
+
+const PRODUCT_CONVERSION = [
+  { name:'蛮好的人生', sub:'养老年金方案 · 主推产品', plans:18, premium:'¥18.4万', pct:86, color:'#165DFF' },
+  { name:'教育金方案', sub:'少儿教育年金 · 家庭客户', plans:11, premium:'¥9.8万', pct:62, color:'#00B42A' },
+  { name:'养老年金方案', sub:'40+ 客户养老规划', plans:9, premium:'¥8.7万', pct:54, color:'#FF7D00' },
+  { name:'家庭保障组合', sub:'重疾/医疗/寿险组合', plans:7, premium:'¥5.7万', pct:38, color:'#F53F3F' },
+];
+
+const RIGHT_TOOLS = [
+  { e:'✍️', tip:'营销笔记', active:true, prompt:'生成一篇年金险营销笔记，结合降息热点和家庭养老规划场景。', reply:'已按「营销笔记」模式生成：标题建议《存款利率又降了，普通家庭该怎么锁住未来现金流？》\\n\\n结构：降息焦虑开场 → 家庭养老故事 → 年金险锁利价值 → 私信领取利益演示。\\n\\n下一步建议：配一张「利率下行 vs 长期现金流」对比封面。' },
+  { e:'🎬', tip:'抖音脚本', prompt:'生成一个30秒抖音口播脚本，主题是年金险锁定利率。', reply:'已切换到「抖音脚本」：\\n\\n0-3秒：存款利率跌到2%以下，你的钱还只放银行吗？\\n4-18秒：用家庭养老场景解释年金险锁定现金流。\\n19-27秒：展示计划书里每年领取金额。\\n28-30秒：评论区打“养老”，我发你测算模板。' },
+  { e:'💡', tip:'爆款标题', prompt:'生成10个年金险爆款标题，适合小红书和抖音。', reply:'已生成「爆款标题」方向：\\n1. 存款利率跌破2%，普通家庭的钱到底该怎么放？\\n2. 30岁以后，我开始给自己准备第二份工资\\n3. 给父母规划养老前，我先看懂了这张表\\n\\n点击率最高建议：用“利率下降 + 普通家庭 + 钱放哪”组合。' },
+  { e:'🔥', tip:'爆款复刻', prompt:'复刻当前同行爆款结构，改写成年金险内容。', reply:'已进入「爆款复刻」：\\n\\n原爆款结构拆解：焦虑钩子 → 真实家庭场景 → 反常识解释 → 低门槛行动。\\n\\n可复刻成：降息后存款焦虑 → 妈妈为家庭现金流做规划 → 年金险合同锁定收益 → 私信领取计划书。' },
+  { sep:true },
+  { e:'✨', tip:'AI润色', prompt:'把当前文案润色得更专业、更像职场女性人设。', reply:'已完成「AI润色」建议：\\n\\n语气调整为：专业、克制、轻柔，不制造焦虑。\\n表达替换：把“保证收益、稳赚”改为“合同约定利益、长期现金流规划”。\\n结尾建议：从“快买”改成“先看利益演示，再判断是否适合自己”。' },
+  { e:'🛡️', tip:'合规检测', prompt:'检测当前保险营销文案是否存在合规风险。', reply:'合规检测结果：通过，但建议规避以下表达：\\n\\n风险词：保证年化、稳赚不赔、比银行强10倍、绝对安全。\\n替代表达：合同约定利益、长期规划工具、适合部分家庭现金流安排。\\n\\n建议发送前保留“以合同条款为准”。' },
+  { e:'🔁', tip:'改写压缩', prompt:'把当前内容压缩成适合私信回复的一段话。', reply:'已压缩成私信版：\\n\\n如果您担心利率继续下降，可以先看一份年金险利益演示。它的核心不是短期高收益，而是把未来可领取的现金流写进合同里，更适合做养老或家庭长期规划。' },
+  { sep:true },
+  { e:'🌐', tip:'选题广场', action:'topic', prompt:'打开选题广场，查看最新行业热点和灵感岛素材。', reply:'已为你打开「选题广场」。可以从行业热点里选择“降息、养老、教育金”等方向，再一键填入创作中心。' },
+  { e:'🏷️', tip:'话题标签', prompt:'生成适合年金险内容的小红书和抖音话题标签。', reply:'已生成「话题标签」：\\n\\n#年金险 #养老规划 #家庭理财 #降息时代 #养老金规划 #保险科普 #普通家庭理财 #长期现金流 #教育金规划 #职场妈妈理财' },
+  { sep:true },
+  { e:'📁', tip:'草稿箱', prompt:'查看并整理当前草稿箱内容。', reply:'草稿箱已整理：\\n\\n待完善草稿 3 篇：降息热点年金笔记、教育金问答、养老现金流脚本。\\n建议优先发布：降息热点年金笔记，当前热度最高，可承接计划书私信。' },
+  { e:'⭐', tip:'我的收藏', prompt:'查看收藏的爆款素材，并给出可复用方向。', reply:'我的收藏分析：\\n\\n收藏素材主要集中在“降息焦虑、养老现金流、教育金规划”三类。\\n建议今天复用：降息焦虑开场 + 年金险利益演示 + 私信领取计划书。' },
+];
+
+const NAV_ITEMS = [
+  { key:'chat',    label:'创作中心',  e:'✦',  icon:'spark', group:'flow' },
+  { key:'tpl',     label:'写作模板',  e:'📋', icon:'template', group:'flow' },
+  { key:'agent',   label:'智能体中心', e:'🤖', icon:'bot', group:'flow' },
+  { key:'topic',   label:'选题广场',  e:'🌐', icon:'globe', group:'flow' },
+  { key:'aigen',   label:'AI生图',    e:'🖼️', icon:'image', group:'flow' },
+  { key:'pub',     label:'发布管理',  e:'📤', icon:'publish', group:'flow' },
+  { key:'data',    label:'数据看板',  e:'📊', icon:'chart', group:'flow' },
+  { key:'inbox',   label:'消息收件箱', e:'📥', icon:'inbox', badge:9, group:'crm' },
+  { key:'clients', label:'潜客公海池', e:'👥', icon:'users', group:'crm' },
+  { key:'follow',  label:'跟进任务',  e:'📅', icon:'calendar', group:'crm' },
+];
+
+const TOP_TABS = ['chat','topic','aigen','data','pub','inbox','clients'];
+
+const HOT_CAPTURE_HISTORY = [
+  { time:'刚刚', title:'存款利率跌破2%，普通家庭资金配置讨论升温', source:'小红书热榜 Top 1', tags:['降息热点','年金险切入'] },
+  { time:'8分钟前', title:'养老焦虑调查引发 35-45 岁人群规划讨论', source:'微博热议', tags:['养老规划','高意向线索'] },
+  { time:'23分钟前', title:'教育金规划内容在亲子账号下互动增长', source:'小红书行业池', tags:['教育金','家庭场景'] },
+  { time:'1小时前', title:'保单贷款功能解释类短视频完播率提升', source:'抖音保险频道', tags:['异议处理','视频脚本'] },
+];
+
+function NavIcon({ name, active }) {
+  const common = { viewBox:'0 0 24 24', 'aria-hidden':'true' };
+  const line = {
+    spark: <svg {...common}><path d="M12 3l2.1 6.1L20 12l-5.9 2.9L12 21l-2.1-6.1L4 12l5.9-2.9L12 3z" /></svg>,
+    template: <svg {...common}><rect x="6" y="4" width="12" height="16" rx="2" /><path d="M9 8h6M9 12h6M9 16h4" /></svg>,
+    bot: <svg {...common}><rect x="5" y="8" width="14" height="10" rx="3" /><path d="M12 5v3M9 13h.01M15 13h.01M8 18l-2 2M16 18l2 2" /></svg>,
+    globe: <svg {...common}><circle cx="12" cy="12" r="8" /><path d="M4 12h16M12 4c2.2 2.4 3.2 5.1 3.2 8s-1 5.6-3.2 8M12 4c-2.2 2.4-3.2 5.1-3.2 8s1 5.6 3.2 8" /></svg>,
+    image: <svg {...common}><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M8 14l3-3 3 3 2-2 4 4M8 9h.01" /></svg>,
+    publish: <svg {...common}><path d="M12 4v10M8 8l4-4 4 4" /><path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" /></svg>,
+    chart: <svg {...common}><path d="M5 19V9M12 19V5M19 19v-7" /><path d="M4 19h16" /></svg>,
+    inbox: <svg {...common}><path d="M5 6h14l2 8v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4l2-8z" /><path d="M3 14h5l1.5 2h5L16 14h5" /></svg>,
+    users: <svg {...common}><path d="M16 19c0-2.2-1.8-4-4-4s-4 1.8-4 4" /><circle cx="12" cy="9" r="3" /><path d="M20 19c0-1.7-1-3.1-2.5-3.7M17 6.4a2.5 2.5 0 0 1 0 5.2M4 19c0-1.7 1-3.1 2.5-3.7M7 6.4a2.5 2.5 0 0 0 0 5.2" /></svg>,
+    calendar: <svg {...common}><rect x="5" y="5" width="14" height="15" rx="2" /><path d="M8 3v4M16 3v4M5 10h14" /></svg>,
+  };
+  const solid = {
+    spark: <svg {...common}><path d="M12 2.8l2.3 6.5 6 2.7-6 2.7-2.3 6.5-2.3-6.5-6-2.7 6-2.7L12 2.8z" /></svg>,
+    template: <svg {...common}><path d="M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm1 5v1.5h6V8H9zm0 4v1.5h6V12H9zm0 4v1.5h4V16H9z" /></svg>,
+    bot: <svg {...common}><path d="M11 4h2v3h3a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4h3V4zm-3 8.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm8 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zM7 20h10v1.5H7V20z" /></svg>,
+    globe: <svg {...common}><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm1 2.2c1.2 1.6 1.9 3.5 2.1 5.8H13V5.2zM11 5.2V11H8.9c.2-2.3.9-4.2 2.1-5.8zM5.2 13H7c.1 1.8.5 3.5 1.3 4.9A7 7 0 0 1 5.2 13zm3.7 0H11v5.8c-1.2-1.6-1.9-3.5-2.1-5.8zm4.1 5.8V13h2.1c-.2 2.3-.9 4.2-2.1 5.8zm2.7-.9c.8-1.4 1.2-3.1 1.3-4.9h1.8a7 7 0 0 1-3.1 4.9zM17 11c-.1-1.8-.5-3.5-1.3-4.9A7 7 0 0 1 18.8 11H17zM8.3 6.1C7.5 7.5 7.1 9.2 7 11H5.2a7 7 0 0 1 3.1-4.9z" /></svg>,
+    image: <svg {...common}><path d="M6 4h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zm2 4.3a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8zm-2 8.2h12l-4.3-4.4-2.6 2.6-2-2.1L6 16.5z" /></svg>,
+    publish: <svg {...common}><path d="M12 3l5 5h-3v6h-4V8H7l5-5z" /><path d="M5 13h4v2h6v-2h4v5a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-5z" /></svg>,
+    chart: <svg {...common}><path d="M4 19h16v2H4v-2zM6 10h4v8H6v-8zm5-6h4v14h-4V4zm5 9h4v5h-4v-5z" /></svg>,
+    inbox: <svg {...common}><path d="M5 5h14l2 8v5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-5l2-8zm-.2 9l.8 4h12.8l.8-4H16l-1.5 2h-5L8 14H4.8z" /></svg>,
+    users: <svg {...common}><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-3.3 0-6 2.1-6 4.6V20h12v-1.4c0-2.5-2.7-4.6-6-4.6z" /><path d="M18 12.5c2.3.4 4 2 4 3.9V18h-3.2c-.2-1.8-1.3-3.5-3-4.6.8-.2 1.5-.5 2.2-.9zM6 12.5c-2.3.4-4 2-4 3.9V18h3.2c.2-1.8 1.3-3.5 3-4.6-.8-.2-1.5-.5-2.2-.9z" /></svg>,
+    calendar: <svg {...common}><path d="M7 3h2v3h6V3h2v3h1a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3h1V3zm-2 8v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7H5z" /></svg>,
+  };
+  return <span className={`nav-icon ${active ? 'solid' : 'line'}`}>{(active ? solid : line)[name] || line.spark}</span>;
+}
+
+function HotCaptureNotice({ open, onToggle }) {
+  return (
+    <div className="hot-capture-wrap">
+      <button className="hot-capture-btn" onClick={onToggle}>
+        🔥 热点抓取
+        <span className="hot-capture-dot">{HOT_CAPTURE_HISTORY.length}</span>
+      </button>
+      {open && (
+        <div className="hot-capture-panel">
+          <div className="hot-capture-head">
+            <div>
+              <div className="hot-capture-title">热点抓取历史</div>
+              <div className="hot-capture-sub">最新记录在最上方</div>
+            </div>
+            <button onClick={onToggle} style={{border:'none',background:'transparent',fontSize:16,color:'#86909c',cursor:'pointer'}}>×</button>
+          </div>
+          <div className="hot-capture-list">
+            {HOT_CAPTURE_HISTORY.map((item) => (
+              <div key={item.time + item.title} className="hot-capture-item">
+                <div className="hot-capture-time">{item.time} · {item.source}</div>
+                <div className="hot-capture-name">{item.title}</div>
+                <div className="hot-capture-meta">
+                  {item.tags.map(tag => <span key={tag} className="hot-capture-tag">{tag}</span>)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const RECENT_CHATS = [
+  { icon:'🔥', name:'降息热点年金文案', time:'12分钟前 · 小红书种草' },
+  { icon:'📋', name:'计划书发送话术', time:'今天 14:20 · 企微承接' },
+  { icon:'👶', name:'教育金异议处理', time:'昨天 · 客户回复' },
+];
+
+// ═══════════════════════════════════════════════
+//  CHAT PAGE
+// ═══════════════════════════════════════════════
+
+function ChatPage({ onGo, seed, personas = [] }) {
+  const [persona, setPersona] = useState('pro');
+  const [msgs, setMsgs] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [inputMode, setInputMode] = useState('free');
+  const [showThink, setShowThink] = useState(null); // msg index
+  const [hotCaptureOpen, setHotCaptureOpen] = useState(false);
+  const bodyRef = useRef(null);
+  const personaList = [...PERSONAS, ...personas];
+
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+  }, [msgs, loading]);
+
+  useEffect(() => {
+    if (!seed) return;
+    setLoading(false);
+    setInputMode(seed.mode || 'free');
+    if (seed.personaId) setPersona(seed.personaId);
+    setMsgs(m => [
+      ...m,
+      { role:'user', text: seed.prompt },
+      { role:'ai', text: seed.reply, comply: seed.comply !== false, think: seed.think || AI_THINK },
+    ]);
+  }, [seed?.id]);
+
+  const doSend = (text) => {
+    const msg = (text || input).trim();
+    if (!msg || loading) return;
+    setInput('');
+    const newMsgs = [...msgs, { role:'user', text: msg }];
+    setMsgs(newMsgs);
+    setLoading(true);
+    setTimeout(() => {
+      setMsgs(m => [...m, { role:'ai', text: AI_REPLY, comply:true, think: AI_THINK }]);
+      setLoading(false);
+    }, 1400);
+  };
+
+  const handleRightTool = (tool) => {
+    if (!tool || tool.sep) return;
+    setInputMode('free');
+    setInput('');
+    setMsgs(m => [
+      ...m,
+      { role:'user', text: tool.prompt || `使用${tool.tip}` },
+      { role:'ai', text: tool.reply || `已进入「${tool.tip}」模式。`, comply: tool.tip === '合规检测' },
+    ]);
+    if (tool.action === 'topic' && onGo) {
+      setTimeout(() => onGo('topic'), 450);
+    }
+  };
+
+  const cur = personaList.find(p => p.id === persona) || personaList[0];
+
+  return (
+    <div className="chat-layout">
+      {/* ── Persona rail ── */}
+      <div className="persona-rail">
+        <div className="persona-rail-label">选择人设</div>
+        {personaList.map(p => (
+          <div key={p.id} className={`persona-card ${persona === p.id ? 'active' : ''}`} onClick={() => setPersona(p.id)}>
+            <div className="persona-avatar-wrap">
+              {p.photo ? <img className="persona-avatar-img" src={p.photo} alt={p.name} /> : p.emoji}
+            </div>
+            <div className="persona-card-name">{p.name}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Chat center ── */}
+      <div className="chat-center">
+        <div className="chat-body" ref={bodyRef}>
+
+          {msgs.length === 0 && (
+            <>
+              <div className="chat-welcome">
+                <div className="chat-welcome-row">
+                  <div>
+                    <h2>下午好，阳阳</h2>
+                    <p>
+                      当前人设：<span style={{color:'#165DFF',fontWeight:700}}>{cur.name}</span> ·{' '}
+                      基于人设 Agent 运作，内容风格和转化策略自动匹配。
+                    </p>
+                  </div>
+                  <HotCaptureNotice
+                    open={hotCaptureOpen}
+                    onToggle={() => setHotCaptureOpen(v => !v)}
+                  />
+                </div>
+              </div>
+              <div className="workbench-strip">
+                <div className="workbench-chip" onClick={() => setInputMode('free')}>✦ 自由创作工作台</div>
+                <div className="workbench-chip" onClick={() => setInputMode('tpl')}>📋 写作模板下沉入口</div>
+                <div className="workbench-chip" onClick={() => setInputMode('persona')}>🤖 人设 Agent 配置</div>
+                <div className="workbench-chip" onClick={() => doSend('帮我基于当前人设，生成一套从小红书评论到企微计划书发送的承接话术')}>💬 发企微计划书</div>
+              </div>
+              <div className="quick-grid">
+                {QUICK_TASKS.map((t, i) => (
+                  <div key={i} className="quick-card" onClick={() => doSend(t.prompt)}>
+                    <div className="quick-icon">
+                      <img className="quick-icon-img" src={t.icon} alt={t.label} />
+                    </div>
+                    <div>
+                      <div className="quick-card-label">{t.label}</div>
+                      <div className="quick-card-sub">{t.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {msgs.map((m, i) => (
+            <div key={i} className={`msg-row ${m.role === 'user' ? 'user' : ''}`}>
+              <div className={`msg-av ${m.role}`}>{m.role === 'ai' ? '✦' : '阳'}</div>
+              <div className="msg-content">
+                <div className={`msg-bubble ${m.role}`}>{m.text}</div>
+                {m.comply && (
+                  <div style={{marginTop:6}}>
+                    <span className="comply-badge">✓ 合规检测通过 · 无违禁词</span>
+                    {m.think && (
+                      <span
+                        style={{fontSize:11,color:'#165DFF',cursor:'pointer',marginLeft:8,textDecoration:'underline'}}
+                        onClick={() => setShowThink(showThink === i ? null : i)}
+                      >
+                        {showThink === i ? '收起思考过程' : '查看 AI 深度思考'}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {showThink === i && m.think && (
+                  <div className="think-block">
+                    <div className="think-block-label">✦ AI 深度思考 · 规划面板</div>
+                    <div><b>阶段识别：</b>{m.think.stage}</div>
+                    <div style={{marginTop:4}}><b>需求信号：</b>{m.think.signal}</div>
+                    <div style={{marginTop:4}}><b>推荐动作：</b>{m.think.action}</div>
+                    <div style={{marginTop:4}}><b>合规规则：</b>{m.think.rule}</div>
+                  </div>
+                )}
+                {m.role === 'ai' && (
+                  <div style={{display:'flex',gap:6,marginTop:8,flexWrap:'wrap'}}>
+                    {['复制', '再生成', '润色', '直接发布', '存草稿'].map(a => (
+                      <button key={a} className="attach-btn-mini" style={{height:24,fontSize:10}}>{a}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {loading && (
+            <div className="msg-row">
+              <div className="msg-av ai">✦</div>
+              <div className="msg-bubble ai" style={{color:'#86909c',display:'flex',alignItems:'center',gap:8}}>
+                <span style={{display:'inline-block',width:14,height:14,border:'2px solid #bcd1ff',borderTopColor:'#165DFF',borderRadius:'50%',animation:'spin .6s linear infinite'}} />
+                AI 正在生成中...
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Input area ── */}
+        <div className="chat-input-area">
+          <div className="input-box-wrap">
+            <div className="input-mode-tabs">
+              {[['free','自由创作'],['tpl','从模板生成'],['persona','切换人设']].map(([id,label]) => (
+                <div key={id} className={`imt ${inputMode === id ? 'active' : ''}`} onClick={() => setInputMode(id)}>{label}</div>
+              ))}
+            </div>
+            <div className="mode-helper">
+              <span className="mode-helper-tag">
+                {inputMode === 'free' ? '自由创作' : inputMode === 'tpl' ? '模板生成' : '人设切换'}
+              </span>
+              <span>
+                {inputMode === 'free'
+                  ? '直接描述内容目标，AI 会按当前人设补齐选题、结构、合规和转化动作。'
+                  : inputMode === 'tpl'
+                    ? '选择爆款标题、种草笔记、异议处理、企微计划书等模板后生成。'
+                  : '切换或调整人设语气、禁区词、销售阶段规则，再继续创作。'}
+              </span>
+            </div>
+            {inputMode === 'tpl' && (
+              <div className="embedded-panel">
+                <div className="embedded-panel-title">模板快捷选择</div>
+                <div className="embedded-chip-row">
+                  {[
+                    ['种草笔记','帮我按小红书种草笔记模板写一篇年金险内容，包含标题、开头钩子、正文结构和私信引导'],
+                    ['爆款标题','帮我生成10个年金险爆款标题，并按点击率预估排序'],
+                    ['异议处理','客户质疑利率和缴费期，请生成一段专业但不压迫的异议处理话术'],
+                    ['企微计划书','帮我生成企微计划书发送话术，提醒客户先看利益演示再进入投保链接'],
+                    ['内容日历','帮我生成7天保险获客内容日历，覆盖热点、知识、人设故事']
+                  ].map(([label,prompt]) => (
+                    <button key={label} className="embedded-chip" onClick={() => setInput(prompt)}>{label}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {inputMode === 'persona' && (
+              <div className="embedded-panel">
+                <div className="embedded-panel-title">人设 Agent 配置</div>
+                <div className="persona-config-grid">
+                  <div className="persona-config-card">
+                    <div className="persona-config-label">人设语气</div>
+                    <div className="persona-config-value">{cur.name} · {cur.desc}</div>
+                  </div>
+                  <div className="persona-config-card">
+                    <div className="persona-config-label">禁区词</div>
+                    <div className="persona-config-value">绝对收益 / 保本 / 稳赚 / 最高收益</div>
+                  </div>
+                  <div className="persona-config-card">
+                    <div className="persona-config-label">销售阶段规则</div>
+                    <div className="persona-config-value">先计划书，再解锁投保链接</div>
+                  </div>
+                </div>
+                <div className="url-learn-row">
+                  <span className="mode-helper-tag">爆款URL学习</span>
+                  <input className="url-learn-input" placeholder="粘贴小红书/抖音爆款 URL，学习结构与语气" />
+                  <button className="embedded-chip" onClick={() => setInput('请学习这个爆款URL的标题钩子、正文节奏和转化点，并生成同风格保险内容')}>学习并生成</button>
+                </div>
+              </div>
+            )}
+            <textarea
+              className="chat-ta"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); } }}
+              placeholder={`输入你的需求，或点击上方快捷任务…  Enter 发送  Shift+Enter 换行`}
+            />
+            <div className="input-footer-row">
+              <button className="attach-btn-mini">📷 上传图片</button>
+              <button className="attach-btn-mini">📎 附件</button>
+              <button className="attach-btn-mini">🏷️ 选择产品</button>
+              <span style={{fontSize:11,color:'#c9cdd4',marginLeft:'auto'}}>{input.length} / 5000 token</span>
+              <button
+                className="send-circle-btn"
+                disabled={!input.trim() || loading}
+                onClick={() => doSend()}
+              >→</button>
+            </div>
+          </div>
+          <div className="input-hint">每次对话消耗 1 权益分 · 内容由 AI 生成，仅供参考，请遵守相关法律法规及平台规则</div>
+        </div>
+      </div>
+
+      {/* ── Right tools ── */}
+      <div className="right-tools">
+        {RIGHT_TOOLS.map((t, i) =>
+          t.sep
+            ? <div key={i} className="rt-sep" />
+            : (
+              <div key={i} className={`rt-btn ${t.active ? 'active' : ''}`} onClick={() => handleRightTool(t)}>
+                <span className="rt-icon">{t.e}</span>
+                <span className="rt-label">{t.tip}</span>
+              </div>
+            )
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  DATA PAGE
+// ═══════════════════════════════════════════════
+
+function BarChart({ acct }) {
+  const days = ['5/8','5/9','5/10','5/11','5/12','5/13','5/14'];
+  const raw = BAR_DATA_SETS[acct] || BAR_DATA_SETS.all;
+  const max = Math.max(...raw);
+  return (
+    <div className="bar-chart">
+      {raw.map((v, i) => (
+        <div key={i} className="bar-col-wrap">
+          <div className="bar-val">{v}</div>
+          <div className="bar-item bar-all" style={{height: `${(v/max)*72}px`}} />
+          <div className="bar-day">{days[i]}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PeerModal({ item, onClose }) {
+  if (!item) return null;
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-card" style={{width:'min(600px,94vw)'}}>
+        <div className="modal-head">
+          <div className="peer-rank-dot">#{item.rank}</div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:15,fontWeight:800,lineHeight:1.45}}>{item.title}</div>
+            <div style={{fontSize:11,color:'#86909c',marginTop:3}}>{item.meta}</div>
+          </div>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <div style={{background:'#f7f8fa',borderRadius:8,padding:'12px 14px',fontSize:13,lineHeight:1.8,color:'#4e5969',marginBottom:14}}>
+            <div style={{fontSize:11,fontWeight:700,color:'#86909c',marginBottom:10,letterSpacing:'.03em'}}>✦ AI 结构拆解</div>
+            <div><b>🪝 标题钩子：</b>{item.hook}</div>
+            <div style={{marginTop:6}}><b>📐 内容结构：</b>{item.struct}</div>
+            <div style={{marginTop:6}}><b>💬 情绪节奏：</b>{item.emotion}</div>
+            <div style={{marginTop:6}}><b>🎯 转化策略：</b>私信引导 + 计划书钩子 + 企微沉淀</div>
+          </div>
+          <div style={{background:'#e8f3ff',borderRadius:8,padding:'10px 14px',fontSize:12,color:'#1d5bd8',lineHeight:1.7}}>
+            <b>AI 仿写建议：</b>可直接套用「{item.struct.split('→')[0]}→故事植入→年金险价值锚定→私信引导」结构，
+            替换产品关键词「蛮好的人生」，结合当前降息热点加强开场冲击感。
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="attach-btn-mini" style={{height:32,fontSize:12}} onClick={onClose}>关闭</button>
+          <button className="attach-btn-mini" style={{height:32,fontSize:12}}>查看原文</button>
+          <button style={{height:32,padding:'0 16px',background:'#165DFF',color:'#fff',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer'}}>
+            ✦ 一键填入创作中心
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DataPage({ onShowViral }) {
+  const [acct, setAcct] = useState('all');
+  const [range, setRange] = useState('7d');
+  const [peerModal, setPeerModal] = useState(null);
+
+  const kpis = KPI_MAP[acct] || KPI_MAP.all;
+  const curAcct = DATA_ACCOUNTS.find(a => a.id === acct);
+
+  return (
+    <div className="data-layout">
+      {/* ── Account switcher ── */}
+      <div className="data-accts-panel">
+        <div className="data-accts-title">数据视角</div>
+        {DATA_ACCOUNTS.map((a, i) => {
+          const showSep = (a.id === 'xhs_all' || a.id === 'dy_all' || a.id === 'sph1');
+          return (
+            <React.Fragment key={a.id}>
+              {showSep && <div className="data-platform-sep" />}
+              <div
+                className={`data-acct-row ${acct === a.id ? 'active' : ''}`}
+                onClick={() => setAcct(a.id)}
+              >
+                <div className="data-acct-dot" style={{background: a.dot, opacity: a.indent ? .6 : 1}} />
+                <div style={{flex:1,minWidth:0}}>
+                  <div className="data-acct-name" style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                    {a.name}
+                  </div>
+                  <div className="data-acct-sub">{a.sub}</div>
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {/* ── Main data area ── */}
+      <div className="data-main-area">
+
+        {/* Date bar */}
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16,flexShrink:0}}>
+          <span style={{fontSize:15,fontWeight:700,flex:1}}>数据看板</span>
+          <span style={{fontSize:11,padding:'3px 10px',borderRadius:6,fontWeight:600,background: curAcct?.plat === 'xhs' ? '#fff0f0' : curAcct?.plat === 'dy' ? '#f2f3f5' : curAcct?.plat === 'sph' ? '#e8ffea' : '#e8f3ff', color: curAcct?.plat === 'xhs' ? '#f53f3f' : curAcct?.plat === 'dy' ? '#1d2129' : curAcct?.plat === 'sph' ? '#00b42a' : '#165DFF'}}>
+            {curAcct?.name}
+          </span>
+          {[['7d','近7天'],['30d','近30天'],['90d','近90天']].map(([id,label]) => (
+            <button key={id} onClick={() => setRange(id)} style={{height:28,padding:'0 12px',borderRadius:7,fontSize:12,fontWeight:500,cursor:'pointer',border:'1px solid',background: range===id ? '#165DFF' : '#fff', color: range===id ? '#fff' : '#4e5969', borderColor: range===id ? '#165DFF' : '#e5e6eb', transition:'all .12s'}}>
+              {label}
+            </button>
+          ))}
+          <button onClick={onShowViral} style={{height:28,padding:'0 12px',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer',border:'1px solid #ffd591',background:'#fff7e8',color:'#ff7d00'}}>
+            🔥 爆款推送
+          </button>
+        </div>
+
+        {/* KPI row */}
+        <div className="kpi-row">
+          {kpis.map((k, i) => (
+            <div key={i} className="kpi-card">
+              <div className="kpi-label">{k.label}</div>
+              <div className="kpi-value">{k.val}</div>
+              <div className={`kpi-change ${k.flat ? 'kpi-flat' : k.up ? 'kpi-up' : 'kpi-dn'}`}>
+                {!k.flat && (k.up ? '↑ ' : '↓ ')}{k.chg}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts row */}
+        <div className="charts-row">
+          <div className="chart-card">
+            <div className="chart-title">
+              内容互动趋势
+              <span className="chart-title-sub">近 7 天 · 全平台汇总</span>
+            </div>
+            <BarChart acct={acct} />
+          </div>
+          <div className="chart-card">
+            <div className="chart-title">平台流量占比</div>
+            <div style={{paddingTop:4}}>
+              {[
+                {name:'小红书', pct:58, color:'#F53F3F', val:'3.9万'},
+                {name:'抖音',   pct:31, color:'#1D2129', val:'2.1万'},
+                {name:'视频号', pct:11, color:'#00B42A', val:'7,400'},
+              ].map(p => (
+                <div key={p.name} className="pcomp-row">
+                  <div className="pcomp-name">{p.name}</div>
+                  <div className="pcomp-bg">
+                    <div className="pcomp-fill" style={{width:`${p.pct}%`,background:p.color}} />
+                  </div>
+                  <div className="pcomp-val">{p.val}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Insurance business funnel */}
+        <div className="insurance-row">
+          <div className="funnel-card">
+            <div className="chart-title">
+              保险业务漏斗
+              <span className="chart-title-sub">内容获客 → 计划书 → 投保链路</span>
+            </div>
+            <div className="funnel-steps">
+              {INSURANCE_FUNNEL.map(step => (
+                <div key={step.label} className="funnel-step">
+                  <div className="funnel-label">{step.label}</div>
+                  <div className="funnel-value">{step.value}</div>
+                  <div className="funnel-sub">{step.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="product-card">
+            <div className="chart-title">
+              年金险产品转化
+              <span className="chart-title-sub">虚拟保险数据</span>
+            </div>
+            <div className="product-list">
+              {PRODUCT_CONVERSION.map(p => (
+                <div key={p.name} className="product-row">
+                  <div>
+                    <div className="product-name">{p.name}</div>
+                    <div className="product-sub">{p.sub}</div>
+                    <div className="product-bar-bg">
+                      <div className="product-bar-fill" style={{width:`${p.pct}%`,background:p.color}} />
+                    </div>
+                  </div>
+                  <div className="product-num">{p.plans} 份</div>
+                  <div className="product-premium">{p.premium}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Peer hot section */}
+        <div className="peer-section">
+          <div className="peer-sec-title">
+            <span>🔥 同行爆款监控</span>
+            <button onClick={onShowViral} style={{fontSize:12,color:'#165DFF',background:'none',border:'none',cursor:'pointer',fontWeight:500}}>
+              开启实时推送 →
+            </button>
+          </div>
+          <div className="peer-grid">
+            {PEER_HOT.map(p => (
+              <div key={p.rank} className="peer-card">
+                <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:7}}>
+                  <div className="peer-rank-dot">#{p.rank}</div>
+                  <span className={p.platTag === 'xhs' ? 'plat-tag-xhs' : 'plat-tag-dy'}>{p.plat}</span>
+                  <span className="peer-card-tip" style={{marginLeft:'auto'}}>{p.tip}</span>
+                </div>
+                <div className="peer-card-title">{p.title}</div>
+                <div className="peer-card-meta">{p.meta}</div>
+                <div className="peer-card-tags">
+                  {p.tags.map(t => <span key={t} className="peer-card-tag">{t}</span>)}
+                </div>
+                <div className="peer-actions">
+                  <button style={{height:26,padding:'0 10px',background:'#165DFF',color:'#fff',border:'none',borderRadius:6,fontSize:11,fontWeight:600,cursor:'pointer'}} onClick={() => setPeerModal(p)}>
+                    AI 拆解
+                  </button>
+                  <button className="attach-btn-mini">一键仿写</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Content performance table */}
+        <div className="data-table-section">
+          <div className="data-table-hdr">
+            <span className="data-table-hdr-title">内容效果明细</span>
+            <div style={{display:'flex',gap:6}}>
+              <button className="attach-btn-mini">筛选</button>
+              <button className="attach-btn-mini">↓ 导出</button>
+            </div>
+          </div>
+          <table className="data-table">
+            <colgroup>
+              <col style={{width:'36%'}} />
+              <col style={{width:'72px'}} />
+              <col style={{width:'72px'}} />
+              <col style={{width:'60px'}} />
+              <col style={{width:'68px'}} />
+              <col style={{width:'72px'}} />
+              <col style={{width:'72px'}} />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>内容标题</th>
+                <th>平台</th>
+                <th>浏览量</th>
+                <th>互动</th>
+                <th>新潜客</th>
+                <th>状态</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {CONTENT_TABLE.map(row => (
+                <tr key={row.id}>
+                  <td style={{fontWeight:500,fontSize:12}}>{row.title}</td>
+                  <td><span className={row.plat === '小红书' ? 'plat-tag-xhs' : 'plat-tag-dy'}>{row.plat}</span></td>
+                  <td style={{fontWeight:600}}>{row.views}</td>
+                  <td>{row.engage}</td>
+                  <td style={{color:'#165DFF',fontWeight:700}}>{row.leads}</td>
+                  <td>
+                    {row.status === 'hot'  && <span className="status-hot">🔥 爆款</span>}
+                    {row.status === 'good' && <span className="status-good">✓ 良好</span>}
+                    {row.status === 'norm' && <span className="status-norm">普通</span>}
+                  </td>
+                  <td><button className="imitate-btn">一键仿写</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      {peerModal && <PeerModal item={peerModal} onClose={() => setPeerModal(null)} />}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  VIRAL FLOAT CARD
+// ═══════════════════════════════════════════════
+
+function ViralFloatCard({ onClose, onFill }) {
+  const p = PEER_HOT[0];
+  return (
+    <div className="viral-float">
+      <div className="viral-float-head">
+        <span style={{fontSize:20}}>🔥</span>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13,fontWeight:700,color:'#ff7d00'}}>同类爆款刚刚上榜</div>
+          <div style={{fontSize:11,color:'#86909c'}}>3分钟前 · 小红书热榜 Top 1</div>
+        </div>
+        <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',color:'#86909c',fontSize:18,lineHeight:1}}>×</button>
+      </div>
+      <div className="viral-float-body">
+        <div style={{fontSize:13,fontWeight:700,lineHeight:1.45,marginBottom:6}}>{p.title}</div>
+        <div style={{fontSize:11,color:'#86909c',marginBottom:10}}>{p.meta}</div>
+        <div style={{background:'#fff7e8',borderRadius:7,padding:'9px 11px',fontSize:12,color:'#874d00',lineHeight:1.7,borderLeft:'3px solid #ff7d00'}}>
+          <b>AI速读：</b> 降息焦虑 + 个人故事植入，结构清晰，情绪节奏强，是当前最具借势价值的模板。
+        </div>
+      </div>
+      <div className="viral-float-foot">
+        <button className="attach-btn-mini" style={{height:30,fontSize:12}} onClick={onClose}>忽略</button>
+        <button className="attach-btn-mini" style={{height:30,fontSize:12}}>查看详情</button>
+        <button onClick={() => onFill && onFill(p)} style={{height:30,padding:'0 14px',background:'#165DFF',color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer'}}>
+          ✦ 填入创作中心
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  PLACEHOLDER PAGE
+// ═══════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════
+//  消息收件箱 MOCK DATA & 组件
+// ═══════════════════════════════════════════════
+
+function makePortrait({ bg, skin, hair, shirt, accent }) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="${bg}" offset="0"/>
+          <stop stop-color="#ffffff" offset="1"/>
+        </linearGradient>
+      </defs>
+      <rect width="80" height="80" rx="40" fill="url(#bg)"/>
+      <circle cx="40" cy="35" r="18" fill="${skin}"/>
+      <path d="M22 34c2-15 12-23 25-20 9 2 15 9 14 20-5-6-12-9-21-9-7 0-13 3-18 9z" fill="${hair}"/>
+      <path d="M23 59c4-11 12-16 17-16s13 5 17 16v7H23v-7z" fill="${shirt}"/>
+      <circle cx="33" cy="35" r="2" fill="#1d2129"/>
+      <circle cx="47" cy="35" r="2" fill="#1d2129"/>
+      <path d="M34 44c4 3 8 3 12 0" stroke="${accent}" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+  `;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+const CUSTOMER_PORTRAITS = {
+  c1: makePortrait({ bg:'#e8f3ff', skin:'#f3c7a6', hair:'#2f2a35', shirt:'#165DFF', accent:'#f53f3f' }),
+  c2: makePortrait({ bg:'#e8ffea', skin:'#d9aa7d', hair:'#23272f', shirt:'#00b42a', accent:'#165DFF' }),
+  c3: makePortrait({ bg:'#fff0f6', skin:'#f1c6b3', hair:'#3b2635', shirt:'#eb2f96', accent:'#f53f3f' }),
+  c4: makePortrait({ bg:'#fff7e8', skin:'#d7a47a', hair:'#2b211b', shirt:'#fa8c16', accent:'#165DFF' }),
+  c5: makePortrait({ bg:'#f0e8ff', skin:'#ecc0a6', hair:'#36244f', shirt:'#722ED1', accent:'#eb2f96' }),
+  c6: makePortrait({ bg:'#e8ffea', skin:'#c99165', hair:'#303030', shirt:'#00b42a', accent:'#165DFF' }),
+};
+
+function PersonAvatar({ person, className = 'inbox-conv-av', size = 32, fontSize = 13 }) {
+  const style = { background: person.avatarBg, color: person.avatarColor, width: size, height: size, fontSize };
+  return (
+    <div className={className} style={style}>
+      {person.photo ? <img className="inbox-avatar-img" src={person.photo} alt={person.name} /> : person.avatar}
+    </div>
+  );
+}
+
+const CONVS = [
+  { id:'c1', name:'李晓雯', avatar:'李', photo:CUSTOMER_PORTRAITS.c1, avatarBg:'#e8f3ff', avatarColor:'#165DFF', plat:'小红书', platColor:'#F53F3F', preview:'那利率有保证吗，30年会不会变…', time:'刚刚', intent:'high', intentScore:88, wakeIn:null, stage:'objection',
+    scoreBreak:['收藏+2','评论+5','私信+12','询问利率+18','停留时长+6'],
+    msgs:[
+      {r:'other',t:'你好，看了你的视频，想了解一下年金险'},
+      {r:'self', t:'您好李女士！感谢关注，年金险是目前锁定利率非常好的工具，请问您是在考虑家庭保障还是养老规划方向呢？'},
+      {r:'other',t:'养老方向，但我想问一下，这个利率有保证吗？30年会不会变'},
+    ],
+    aiReply:'李女士，这个问题问得非常专业！年金险的收益是写进合同的，不受银行利率浮动影响，这也是它最核心的价值——"锁利"。换句话说，您今天投保的条款和收益，30年后还是一样，不会变。\n\n我来给您发一份利益演示，数字一目了然，您就能对比出来～',
+    think:{ stage:'异议处理阶段', signal:'用户质疑"利率有保证吗、30年会变"', action:'先认可问题专业性 → 解释合同固定收益逻辑 → 以利益演示数据做背书 → 引导发送计划书', kb:'命中知识库：[年金险利率锁定机制] [合同收益说明]', suggest:'发送计划书（利益演示）' },
+  },
+  { id:'c2', name:'王浩然', avatar:'王', photo:CUSTOMER_PORTRAITS.c2, avatarBg:'#e8ffea', avatarColor:'#00b42a', plat:'抖音', platColor:'#1D2129', preview:'好的，那你给我发一下吧', time:'10分钟', intent:'high', intentScore:91, wakeIn:null, stage:'conversion',
+    scoreBreak:['完播+3','私信+12','方案咨询+20','计划书打开+18','重复提问+8'],
+    msgs:[
+      {r:'other',t:'我看了你的视频，想了解更多'},
+      {r:'self', t:'您好王先生！我看您一直在关注，想请问您主要是为自己还是为家人做规划呢？'},
+      {r:'other',t:'为自己，40岁了想配一份养老年金'},
+      {r:'self', t:'40岁配养老年金正是好时候！我先给您发一份利益演示，您可以看看具体收益。'},
+      {r:'other',t:'好的，那你给我发一下吧'},
+    ],
+    aiReply:'王先生，利益演示已发出！您可以看看第3页的"每年可领金额"和"领取期限"两项，这是最核心的数据。\n\n看完如果觉得合适，我可以直接发您投保链接，整个流程大概5分钟就能完成～',
+    think:{ stage:'投保促成阶段', signal:'用户已表达意向，已发送计划书', action:'确认计划书已看 → 主动提出发投保链接 → 引导5分钟完成投保', kb:'规则触发：已发送计划书 → 投保链接按钮解锁', suggest:'发送投保链接（已满足前置条件）' },
+    planSent: true,
+  },
+  { id:'c3', name:'陈美玲', avatar:'陈', photo:CUSTOMER_PORTRAITS.c3, avatarBg:'#fff0f6', avatarColor:'#eb2f96', plat:'小红书', platColor:'#F53F3F', preview:'我再想想吧', time:'3小时', intent:'mid', intentScore:54, wakeIn:'将在 21 分钟后自动唤醒', stage:'followup',
+    scoreBreak:['收藏+2','评论+5','计划书打开+12','未回复-8'],
+    msgs:[
+      {r:'other',t:'你发的那个计划书我看了，感觉还不错'},
+      {r:'self', t:'太好了！请问有什么不清楚的地方吗？'},
+      {r:'other',t:'我再想想吧'},
+    ],
+    aiReply:'陈女士，完全没问题，这类决定需要想清楚不用急。这样吧，您有没有特别在意的点，比如每年交多少、什么时候开始领？我帮您再细化一下方案，更贴合您的情况～',
+    think:{ stage:'跟进培育阶段', signal:'用户说"再想想"，有推迟决策倾向', action:'不施压 → 用细化问题保持对话 → 找到真实顾虑 → 再给一次价值确认', kb:'命中话术库：[我再想想应对策略]', suggest:'轻度跟进，21分钟沉睡唤醒待机中' },
+  },
+  { id:'c4', name:'张明辉', avatar:'张', photo:CUSTOMER_PORTRAITS.c4, avatarBg:'#fff7e8', avatarColor:'#fa8c16', plat:'抖音', platColor:'#1D2129', preview:'哦，有空看看', time:'昨天', intent:'low', intentScore:22, wakeIn:'24小时唤醒梯度第2轮', stage:'cold',
+    scoreBreak:['完播+3','私信+6','24小时未回复-10','计划书未打开-6'],
+    msgs:[
+      {r:'other',t:'哦，有空看看'},
+    ],
+    aiReply:'张先生，之前给您发的内容不知道有没有机会看到～最近降息消息比较多，我整理了一个对比表，存款 vs 年金险的实际差距，特别直观。您要不要看一眼？',
+    think:{ stage:'沉睡唤醒阶段', signal:'用户24小时内无回复，处于第2轮唤醒', action:'借势热点切入 → 用新内容/数据重新引起兴趣 → 不提上次对话，降低压力感', kb:'命中：[沉睡唤醒话术-第2轮]', suggest:'热点借势唤醒' },
+  },
+  { id:'c5', name:'刘思琪', avatar:'刘', photo:CUSTOMER_PORTRAITS.c5, avatarBg:'#f0e8ff', avatarColor:'#722ED1', plat:'小红书', platColor:'#F53F3F', preview:'那孩子教育金也可以配吗', time:'昨天', intent:'high', intentScore:76, wakeIn:null, stage:'consult',
+    scoreBreak:['复购信号+16','主动咨询+14','家庭场景+8','私信+12'],
+    msgs:[
+      {r:'other',t:'我已经给自己配了一份养老年金了，感觉很好'},
+      {r:'self', t:'太棒了！有了自己的养老规划，家庭保障就更全面了～'},
+      {r:'other',t:'那孩子教育金也可以配吗'},
+    ],
+    aiReply:'当然可以！教育年金是专门为孩子高中、大学阶段设计的，同样是锁定利率、专款专用。而且趁早配，复利效果更明显。\n\n请问孩子今年多大？我帮您看看哪个方案最合适～',
+    think:{ stage:'方案咨询阶段', signal:'用户主动询问教育金，有增购意向', action:'正面回应 → 简单说明教育年金价值 → 用年龄问题收集信息 → 个性化方案推进', kb:'命中：[教育年金介绍] [少儿保险规划]', suggest:'收集孩子年龄，生成教育年金专属方案' },
+  },
+  { id:'c6', name:'赵建国', avatar:'赵', photo:CUSTOMER_PORTRAITS.c6, avatarBg:'#e8ffea', avatarColor:'#00b42a', plat:'视频号', platColor:'#00b42a', preview:'期数太长了吧，30年…', time:'2天前', intent:'mid', intentScore:45, wakeIn:'3小时唤醒（第1轮）', stage:'objection',
+    scoreBreak:['评论+5','私信+8','异议提问+10','未打开计划书-6'],
+    msgs:[
+      {r:'other',t:'期数太长了吧，30年，万一中途需要钱呢'},
+    ],
+    aiReply:'赵先生说得很实际，30年确实是长期规划。但我换个角度：您60岁之后的养老，需要钱的时间会更长——可能20-30年。年金险恰好是为这段时间设计的，不是储蓄罐，而是"退休工资"。\n\n当然中途如果有紧急需求，保单也有贷款功能，最高可贷保单价值的80%，不需要退保。',
+    think:{ stage:'异议处理阶段', signal:'用户质疑"期数太长、中途需要用钱"', action:'先共情 → 重新定义"30年"的价值 → 用养老需求场景对冲期数焦虑 → 补充保单贷款功能消除顾虑', kb:'命中：[期数异议处理] [保单贷款功能说明]', suggest:'发送保单贷款功能说明 + 养老需求测算' },
+  },
+];
+
+function InboxPage() {
+  const [activeConv, setActiveConv] = useState('c1');
+  const [filter, setFilter]         = useState('all');
+  const [planSent, setPlanSent]     = useState({ c2: true });
+  const [inboxMessages, setInboxMessages] = useState(() => ({}));
+  const [showThink, setShowThink]   = useState(false);
+  const [replying, setReplying]     = useState(false);
+  const msgsRef = useRef(null);
+
+  const conv = CONVS.find(c => c.id === activeConv);
+  const isPlanSent = planSent[activeConv] || conv?.planSent;
+  const activeMsgs = inboxMessages[activeConv] || conv?.msgs || [];
+
+  const filteredConvs = CONVS.filter(c =>
+    filter === 'all' ? true :
+    filter === 'high' ? c.intent === 'high' :
+    filter === 'wake' ? !!c.wakeIn : false
+  );
+
+  useEffect(() => {
+    setShowThink(false);
+    setReplying(false);
+  }, [activeConv]);
+
+  useEffect(() => {
+    if (msgsRef.current) msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
+  }, [activeConv, inboxMessages]);
+
+  const appendInboxMessage = (text) => {
+    setInboxMessages(prev => ({...prev, [activeConv]: [...(prev[activeConv] || conv?.msgs || []), { r:'self', t:text }]}));
+  };
+
+  const sendPlan = () => {
+    setPlanSent(p => ({...p, [activeConv]: true}));
+    appendInboxMessage('已发送计划书：利益演示和保障方案已同步给客户。');
+  };
+
+  const sendReply = () => {
+    appendInboxMessage(conv.aiReply);
+    setReplying(true);
+    setTimeout(() => setReplying(false), 800);
+  };
+
+  const sendApplyLink = () => {
+    if (!isPlanSent) return;
+    appendInboxMessage('已发送投保链接：客户可在手机端完成投保流程。');
+  };
+
+  const sendSpeechCard = (text) => {
+    appendInboxMessage(`已发送话术卡片：${text}`);
+  };
+
+  const sendEnterpriseInvite = () => {
+    appendInboxMessage('已发起转企业好友邀请，请客户通过后继续承接。');
+  };
+
+  return (
+    <div className="inbox-layout">
+
+      {/* ── 左侧会话列表 ── */}
+      <div className="inbox-list">
+        <div className="inbox-list-head">
+          <span style={{fontSize:14,fontWeight:700,flex:1}}>消息收件箱</span>
+          <span style={{fontSize:11,background:'#f53f3f',color:'#fff',borderRadius:10,padding:'1px 7px',fontWeight:700}}>9</span>
+        </div>
+        <div className="inbox-filter">
+          {[['all','全部'],['high','高意向'],['wake','待唤醒']].map(([id,label]) => (
+            <div key={id} className={`inbox-filter-chip ${filter===id?'active':''}`} onClick={() => setFilter(id)}>{label}</div>
+          ))}
+        </div>
+        <div className="inbox-conv-list">
+          {filteredConvs.map(c => (
+            <div key={c.id} className={`inbox-conv-item ${activeConv===c.id?'active':''}`}
+              onClick={() => setActiveConv(c.id)}
+            >
+              <div className="inbox-conv-top">
+                <PersonAvatar person={c} />
+                <div className="inbox-conv-body">
+                  <div className="inbox-conv-name-line">
+                    <span className="inbox-conv-name">{c.name}</span>
+                  </div>
+                  <div className="inbox-conv-preview">{c.preview}</div>
+                  <div className="inbox-conv-badges">
+                    <span className={`intent-badge ${c.intent==='high'?'intent-high':c.intent==='mid'?'intent-mid':'intent-low'}`}>
+                      意向{c.intentScore}分
+                    </span>
+                    <span className="inbox-platform-tag" style={{color:c.platColor}}>{c.plat}</span>
+                    {c.wakeIn && <span className="wake-badge">🔔 {c.wakeIn}</span>}
+                  </div>
+                </div>
+                <div className="inbox-conv-time">{c.time}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── 右侧会话线程 + AI 面板 ── */}
+      {conv && (
+        <div className="inbox-thread">
+          {/* 头部 */}
+          <div className="inbox-thread-head">
+            <PersonAvatar person={conv} />
+            <div style={{flex:1}}>
+              <div style={{fontSize:14,fontWeight:700}}>{conv.name}</div>
+              <div style={{fontSize:11,color:conv.platColor,fontWeight:600}}>{conv.plat} · 意向分 {conv.intentScore}</div>
+            </div>
+            <div className="score-bar-wrap">
+              <span style={{color:'#86909c'}}>意向</span>
+              <div className="score-bar-bg">
+                <div className="score-bar-fill" style={{width:`${conv.intentScore}%`, background: conv.intentScore>=70?'#f53f3f':conv.intentScore>=40?'#165DFF':'#86909c'}} />
+              </div>
+              <span className="score-bar-value" style={{color: conv.intentScore>=70?'#f53f3f':conv.intentScore>=40?'#165DFF':'#86909c'}}>{conv.intentScore}</span>
+            </div>
+            {conv.wakeIn && <span className="wake-badge" style={{marginLeft:8}}>🔔 {conv.wakeIn}</span>}
+          </div>
+          <div className="intent-detail">
+            <span className="intent-detail-title">意向分组成</span>
+            {(conv.scoreBreak || []).map(s => <span key={s} className="intent-score-chip">{s}</span>)}
+          </div>
+          <div className="wake-gradient">
+            <b>沉睡唤醒梯度</b>
+            <span className="wake-step">10分钟轻提醒</span>
+            <span>→</span>
+            <span className="wake-step">3小时热点借势</span>
+            <span>→</span>
+            <span className="wake-step">24小时价值重启</span>
+            <span style={{marginLeft:'auto'}}>{conv.wakeIn ? `当前：${conv.wakeIn}` : '当前：无需唤醒'}</span>
+          </div>
+
+          {/* 消息 */}
+          <div className="inbox-msgs" ref={msgsRef}>
+            {activeMsgs.map((m,i) => (
+              <div key={i} className={`inbox-msg-item ${m.r==='self'?'self':''}`}>
+                {m.r==='other' && <PersonAvatar person={conv} className="inbox-msg-av" size={28} fontSize={11} />}
+                {m.r==='self'  && <div className="inbox-msg-av" style={{background:'#165DFF',color:'#fff'}}>阳</div>}
+                <div className="inbox-msg-content">
+                  <div className={`inbox-msg-bubble ${m.r}`}>{m.t}</div>
+                  <div className="inbox-msg-time">{m.r==='other'?conv.time:'已发送'}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* AI 回复面板 */}
+          <div className="inbox-ai-panel">
+            <div className="inbox-ai-scroll">
+              <div className="inbox-ai-panel-head">
+                <span style={{fontSize:15}}>✦</span>
+                <span style={{fontSize:12,fontWeight:700,color:'#165DFF',flex:1}}>AI 建议回复</span>
+                <span style={{fontSize:11,padding:'2px 7px',borderRadius:8,fontWeight:600,
+                  background: conv.stage==='objection'?'#fff0f0':conv.stage==='conversion'?'#e8ffea':conv.stage==='cold'?'#fff7e8':'#e8f3ff',
+                  color: conv.stage==='objection'?'#f53f3f':conv.stage==='conversion'?'#00b42a':conv.stage==='cold'?'#ff7d00':'#165DFF',
+                }}>
+                  {conv.stage==='objection'?'⚡ 异议处理阶段':conv.stage==='conversion'?'🎯 投保促成阶段':conv.stage==='cold'?'💤 沉睡唤醒':conv.stage==='followup'?'🔄 跟进培育':'📋 方案咨询'}
+                </span>
+              </div>
+
+              <div className="inbox-ai-reply-box">
+                <div className="inbox-ai-reply-text">{conv.aiReply}</div>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginTop:8}}>
+                  <button style={{fontSize:11,color:'#165DFF',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:0,fontWeight:500}} onClick={() => setShowThink(v=>!v)}>
+                    {showThink?'▲ 收起深度思考':'▼ 查看 AI 深度思考'}
+                  </button>
+                  <span style={{fontSize:10,color:'#c9cdd4'}}>·</span>
+                  <button style={{fontSize:11,color:'#86909c',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:0}}>重新生成</button>
+                </div>
+              </div>
+
+              {showThink && conv.think && (
+                <div className="think-panel">
+                  <div className="think-panel-label">
+                    ✦ AI 深度思考规划面板
+                    <span style={{fontSize:10,fontWeight:400,color:'#86909c'}}>追溯 AI 生成逻辑</span>
+                  </div>
+                  <div className="think-row"><b>阶段识别：</b>{conv.think.stage}</div>
+                  <div className="think-row"><b>需求信号：</b>{conv.think.signal}</div>
+                  <div className="think-row"><b>推荐动作：</b>{conv.think.action}</div>
+                  <div className="think-row"><b>知识库命中：</b>{conv.think.kb}</div>
+                  <div style={{marginTop:6,fontSize:11,background:'#165DFF',color:'#fff',borderRadius:6,padding:'4px 10px',display:'inline-block',fontWeight:600}}>
+                    → {conv.think.suggest}
+                  </div>
+                </div>
+              )}
+
+              <div className="speech-card-row">
+                <div className="speech-card-title">话术卡片快捷发送</div>
+                <div className="speech-card-grid">
+                  {['先看利益演示', '利率异议解释', '我再想想跟进', '企微引流话术'].map(t => (
+                    <button key={t} className="speech-card" onClick={() => sendSpeechCard(t)}>{t}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="inbox-quick-actions">
+              <span style={{fontSize:11,color:'#86909c',fontWeight:500}}>快捷操作：</span>
+              <button className="inbox-qa-btn" onClick={sendReply}>
+                {replying?'✓ 已发送':'→ 发送此回复'}
+              </button>
+              <button className="inbox-qa-btn" onClick={sendPlan}>
+                {isPlanSent?'✓ 计划书已发':'📋 发送计划书'}
+              </button>
+              <button
+                className={`inbox-qa-btn ${isPlanSent?'primary':'disabled'}`}
+                title={isPlanSent?'':'请先发送计划书（利益演示）后才可推送投保链接'}
+                onClick={sendApplyLink}
+              >
+                🔗 {isPlanSent?'发送投保链接':'投保链接（先发计划书）'}
+              </button>
+              <button className="inbox-qa-btn" style={{marginLeft:'auto'}} onClick={() => sendSpeechCard('推荐使用「先看利益演示」或「利率异议解释」')}>🃏 话术卡片</button>
+              <button className="inbox-qa-btn" onClick={sendEnterpriseInvite}>👤 转企业好友</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  发布管理 MOCK DATA & 组件
+// ═══════════════════════════════════════════════
+
+const PUB_ACCOUNTS = [
+  { id:'xhs1', icon:'🌸', plat:'小红书', name:'年金险日记', fans:'2.4万', cert:'enterprise', certLabel:'企业认证', risk:false },
+  { id:'xhs2', icon:'🌸', plat:'小红书', name:'年金险科普', fans:'8,600', cert:'none', certLabel:'普通账号', risk:true },
+  { id:'dy1',  icon:'🎵', plat:'抖音',   name:'蛮好的人生·阳阳', fans:'1.2万', cert:'enterprise', certLabel:'企业认证', risk:false },
+  { id:'sph1', icon:'📹', plat:'视频号', name:'视频号-阳阳', fans:'3,200', cert:'personal', certLabel:'个人认证', risk:false },
+];
+
+const PUB_QUEUE = [
+  { id:1, plat:'小红书', platColor:'#F53F3F', title:'《存款利率又降了，这件事我三年前就做对了》', acct:'年金险日记', status:'scheduled', time:'今天 18:00 自动发布', preview:'最近银行存款利率一降再降……' },
+  { id:2, plat:'抖音',   platColor:'#1D2129', title:'30秒口播：年金险锁定利率优势解析',           acct:'蛮好的人生·阳阳', status:'draft', time:'草稿', preview:'开场钩子：存款利率跌了！你的钱还在银行吗……' },
+  { id:3, plat:'小红书', platColor:'#F53F3F', title:'《给宝宝的第一份礼物，不是玩具》',           acct:'年金险日记', status:'sending', time:'发布中…', preview:'很多妈妈都问我……' },
+];
+
+function PublishPage() {
+  const [pubTab, setPubTab] = useState('single');
+  const [selAccts, setSelAccts] = useState(['xhs1','dy1']);
+  const [massTarget, setMassTarget] = useState('highIntent');
+  const [massContent, setMassContent] = useState('');
+
+  const toggleAcct = (id) => setSelAccts(prev => prev.includes(id) ? prev.filter(a=>a!==id) : [...prev,id]);
+
+  return (
+    <div className="pub-layout">
+      <div style={{fontSize:15,fontWeight:700,marginBottom:16}}>发布管理</div>
+
+      {/* 风险提示 */}
+      <div className="risk-banner">
+        <span style={{fontSize:18,flexShrink:0}}>⚠️</span>
+        <div>
+          <b>小红书群发功能限制说明：</b>小红书平台正在持续打击批量发布行为，目前仅支持企业认证账号通过指定工具发布（乙小二、一枚助手等）。
+          普通账号使用群发可能触发降流或封号风险。已标注 <span style={{background:'#fff0f0',color:'#f53f3f',padding:'0 5px',borderRadius:4,fontWeight:600}}>⚠ 有风险</span> 的账号请谨慎操作。
+        </div>
+      </div>
+
+      {/* 功能 Tab */}
+      <div className="pub-tabs">
+        {[['single','📤 轻量发布'],['mass','📣 群发']].map(([id,label]) => (
+          <div key={id} className={`pub-tab ${pubTab===id?'active':''}`} onClick={() => setPubTab(id)}>{label}</div>
+        ))}
+      </div>
+
+      {/* 账号选择 */}
+      <div style={{fontSize:13,fontWeight:600,marginBottom:10}}>选择发布账号</div>
+      <div className="accts-grid">
+        {PUB_ACCOUNTS.map(a => (
+          <div key={a.id} className={`acct-card ${selAccts.includes(a.id)?'selected':''}`} onClick={() => toggleAcct(a.id)}>
+            <div className="acct-card-top">
+              <div className="acct-plat-icon" style={{background: a.plat==='小红书'?'#fff0f0': a.plat==='抖音'?'#f2f3f5':'#e8ffea'}}>{a.icon}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:700,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{a.name}</div>
+                <div style={{fontSize:10,color:'#86909c'}}>{a.plat} · {a.fans} 粉丝</div>
+              </div>
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:5}}>
+              <span className={`acct-cert-badge ${a.cert==='enterprise'?'cert-ok':'cert-none'}`}>
+                {a.cert==='enterprise'?'✓ 企业认证':'个人/无认证'}
+              </span>
+              {a.risk && <span className="acct-cert-badge cert-risk">⚠ 群发有风险</span>}
+            </div>
+            {pubTab==='single' && (
+              <input type="checkbox" checked={selAccts.includes(a.id)} onChange={()=>{}} style={{accentColor:'#165DFF',width:14,height:14}} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* 轻量发布 */}
+      {pubTab === 'single' && (
+        <>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+            <div style={{fontSize:13,fontWeight:600}}>发布队列 <span style={{fontSize:11,color:'#86909c',fontWeight:400}}>（{PUB_QUEUE.length} 条待处理）</span></div>
+            <button style={{height:30,padding:'0 14px',background:'#165DFF',color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>+ 新建发布</button>
+          </div>
+          {PUB_QUEUE.map(q => (
+            <div key={q.id} className="queue-card">
+              <div className="queue-card-head">
+                <div className="queue-platform-dot" style={{background: q.platColor}} />
+                <div style={{flex:1}}>
+                  <div style={{fontSize:13,fontWeight:700,marginBottom:3}}>{q.title}</div>
+                  <div style={{fontSize:11,color:'#86909c'}}>账号：{q.acct}</div>
+                </div>
+                <span className={`queue-time-badge ${q.status==='scheduled'?'time-scheduled': q.status==='sending'?'time-sending':'time-draft'}`}>
+                  {q.status==='sending'?'● ':''}{q.time}
+                </span>
+              </div>
+              <div className="queue-card-body">
+                <div style={{fontSize:11,color:'#86909c',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{q.preview}</div>
+                <button style={{height:26,padding:'0 10px',border:'1px solid #e5e6eb',background:'#fff',borderRadius:6,fontSize:11,cursor:'pointer',color:'#4e5969',fontFamily:'inherit',flexShrink:0}}>编辑</button>
+                {q.status==='draft' && <button style={{height:26,padding:'0 10px',border:'none',background:'#165DFF',borderRadius:6,fontSize:11,cursor:'pointer',color:'#fff',fontFamily:'inherit',fontWeight:600,flexShrink:0}}>立即发布</button>}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* 群发 */}
+      {pubTab === 'mass' && (
+        <div className="mass-send-area">
+          <div style={{fontSize:13,fontWeight:700,marginBottom:14}}>群发设置</div>
+          <div style={{marginBottom:14}}>
+            <div style={{fontSize:12,fontWeight:600,marginBottom:8}}>目标人群</div>
+            <div className="mass-target-chips">
+              {[['highIntent','高意向客户（63人）'],['allLeads','全部潜客（186人）'],['sleeping','沉睡客户（41人）'],['custom','自定义筛选']].map(([id,label]) => (
+                <div key={id} className={`mass-chip ${massTarget===id?'active':''}`} onClick={() => setMassTarget(id)}>{label}</div>
+              ))}
+            </div>
+          </div>
+          <div style={{marginBottom:14}}>
+            <div style={{fontSize:12,fontWeight:600,marginBottom:6}}>群发内容</div>
+            <textarea value={massContent} onChange={e=>setMassContent(e.target.value)} style={{width:'100%',border:'1.5px solid #c9cdd4',borderRadius:8,padding:'9px 11px',fontSize:12,fontFamily:'inherit',resize:'none',height:80,outline:'none',lineHeight:1.6}} placeholder="输入群发消息内容，支持插入变量：{姓名}、{产品名}" />
+            <div style={{fontSize:10,color:'#86909c',marginTop:4}}>支持定时发送 · 建议 10-18 点发送，效果最佳</div>
+          </div>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <button style={{height:36,padding:'0 20px',background:'#165DFF',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>立即群发</button>
+            <button style={{height:36,padding:'0 16px',border:'1px solid #e5e6eb',background:'#fff',borderRadius:8,fontSize:13,cursor:'pointer',color:'#4e5969',fontFamily:'inherit'}}>定时发送</button>
+            <span style={{fontSize:11,color:'#86909c',marginLeft:6}}>发送后将消耗 {massTarget==='allLeads'?186:massTarget==='highIntent'?63:massTarget==='sleeping'?41:'自定义'} 条消息配额</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  智能体中心 MOCK DATA & 组件
+// ═══════════════════════════════════════════════
+
+const AGENT_LIST = [
+  {
+    id:'a1', emoji:'👩‍💼', bg:'#e8f3ff', name:'职场专业女性·阳阳', role:'小红书 KOS 主账号人设',
+    desc:'38岁职场妈妈，金融从业10年，分享家庭保险规划经验，风格干练知性，擅长用数据和真实故事打动客户。',
+    plats:[{label:'小红书',c:'#F53F3F'},{label:'朋友圈',c:'#00b42a'}],
+    lastUsed:'今天', genCount:124, active:true,
+    prompt:'我是一名38岁的职场妈妈，从事金融行业10年，主要分享家庭保险规划的经验和心得，语气专业但亲和，多用真实案例，避免说教感。',
+    forbid:['绝对','保证收益','稳赚','保本'],
+    style:'干练知性，数据驱动，真实故事植入',
+  },
+  {
+    id:'a2', emoji:'💁‍♀️', bg:'#fff0f6', name:'年轻理财达人·小橙', role:'抖音/小红书 年轻人群人设',
+    desc:'26岁理财博主，聚焦年轻人的第一份保险规划，内容轻量化、生活化，擅长用反差和悬念吸引年轻群体。',
+    plats:[{label:'抖音',c:'#1D2129'},{label:'小红书',c:'#F53F3F'}],
+    lastUsed:'3天前', genCount:67, active:false,
+    prompt:'我是26岁的年轻博主，分享适合年轻人的理财和保险知识，语气活泼不油腻，多用悬念开头，擅长把复杂知识讲得轻松有趣。',
+    forbid:['必须买','一定要','不买后悔'],
+    style:'活泼轻松，悬念钩子，年轻化表达',
+  },
+  {
+    id:'a3', emoji:'👨‍💼', bg:'#e8ffea', name:'成熟顾问·张主任', role:'高净值客户专项人设',
+    desc:'53岁资深财务顾问，主攻高净值客户养老和资产传承规划，风格沉稳可信，用财富管理视角切入保险价值。',
+    plats:[{label:'朋友圈',c:'#00b42a'},{label:'企业微信',c:'#165DFF'}],
+    lastUsed:'1周前', genCount:38, active:false,
+    prompt:'我是53岁的资深财务顾问，主要服务资产500万以上的高净值客户，内容聚焦养老规划和资产传承，语气沉稳权威，多用数据和专业逻辑。',
+    forbid:['便宜','优惠','打折','限时'],
+    style:'沉稳权威，财富管理视角，数据驱动',
+  },
+];
+
+function AgentPage({ onUseAgent }) {
+  const [drawer, setDrawer] = useState(null); // agent id | 'new'
+  const [drawerData, setDrawerData] = useState({});
+  const editing = drawer === 'new' ? {name:'',role:'',desc:'',prompt:'',forbid:'',style:''} : AGENT_LIST.find(a => a.id === drawer) || {};
+
+  const openEdit = (a) => {
+    setDrawerData({...a, forbid: Array.isArray(a.forbid) ? a.forbid.join('、') : ''});
+    setDrawer(a.id);
+  };
+
+  return (
+    <div className="agent-layout">
+      <div className="agent-wrap">
+        <div className="agent-head">
+          <div style={{fontSize:15,fontWeight:700}}>智能体中心</div>
+          <div style={{fontSize:11,color:'#86909c',flex:1}}>配置 AI 人设、Prompt 策略和工具调用后，创作中心自动以该智能体风格生成内容</div>
+          <button onClick={() => {setDrawerData({});setDrawer('new');}} style={{height:32,padding:'0 14px',background:'#165DFF',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+            + 创建人设
+          </button>
+        </div>
+        <div className="agent-grid">
+          {AGENT_LIST.map(a => (
+            <div key={a.id} className="agent-card">
+              {a.active
+                ? <span className="agent-badge-active">● 使用中</span>
+                : <span className="agent-badge-idle">闲置</span>}
+              <div className="agent-card-hd">
+                <div className="agent-emoji" style={{background:a.bg}}>{a.emoji}</div>
+                <div>
+                  <div className="agent-name">{a.name}</div>
+                  <div className="agent-role">{a.role}</div>
+                </div>
+              </div>
+              <div className="agent-desc">{a.desc}</div>
+              <div className="agent-plats">
+                {a.plats.map(p => (
+                  <span key={p.label} className="agent-plat-tag" style={{background:p.c+'20',color:p.c}}>{p.label}</span>
+                ))}
+              </div>
+              <div className="agent-stat-row">
+                <span>🕐 上次使用：{a.lastUsed}</span>
+                <span>📝 已生成 {a.genCount} 条内容</span>
+              </div>
+              <div className="agent-actions">
+                <button className="agent-act-btn" onClick={() => openEdit(a)}>编辑配置</button>
+                <button className="agent-act-btn primary" onClick={() => onUseAgent && onUseAgent(a)}>立即使用</button>
+              </div>
+            </div>
+          ))}
+          <div className="agent-card new-card" onClick={() => {setDrawerData({});setDrawer('new');}}>
+            <div style={{fontSize:36}}>＋</div>
+            <div style={{fontSize:14,fontWeight:600,color:'#86909c'}}>创建新人设</div>
+            <div style={{fontSize:12,color:'#c9cdd4',textAlign:'center'}}>配置 Prompt 策略、禁用词、<br/>平台风格等参数</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 配置抽屉 */}
+      {drawer && (
+        <>
+          <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.25)',zIndex:499}} onClick={() => setDrawer(null)} />
+          <div className="agent-drawer">
+            <div className="drawer-head">
+              <div style={{fontSize:15,fontWeight:700,flex:1}}>{drawer==='new'?'创建新人设':'编辑人设配置'}</div>
+              <button onClick={() => setDrawer(null)} style={{width:28,height:28,borderRadius:'50%',background:'#f2f3f5',border:'none',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',color:'#86909c'}}>×</button>
+            </div>
+            <div className="drawer-body">
+              {[
+                {label:'人设名称', key:'name', ph:'例：职场专业女性·阳阳'},
+                {label:'角色定位', key:'role', ph:'例：小红书 KOS 主账号人设'},
+              ].map(f => (
+                <div key={f.key} className="field-block">
+                  <div className="field-label">{f.label}</div>
+                  <input className="field-input" defaultValue={editing[f.key]||''} placeholder={f.ph} />
+                </div>
+              ))}
+              {[
+                {label:'背景设定（Prompt）', key:'prompt', ph:'描述这个人设的身份、年龄、背景、专业等，AI 将基于此生成内容…'},
+                {label:'创作风格描述',        key:'style',  ph:'例：干练知性，数据驱动，真实故事植入，避免说教感'},
+                {label:'人设简介',            key:'desc',   ph:'对外展示的简短介绍…'},
+              ].map(f => (
+                <div key={f.key} className="field-block">
+                  <div className="field-label">{f.label}</div>
+                  <textarea className="field-ta" defaultValue={editing[f.key]||''} placeholder={f.ph} style={{height:f.key==='prompt'?100:72}} />
+                </div>
+              ))}
+              <div className="field-block">
+                <div className="field-label">禁用词（逗号分隔）</div>
+                <input className="field-input" defaultValue={editing.forbid||''} placeholder="例：绝对、保证收益、稳赚不赔" />
+                <div style={{fontSize:10,color:'#86909c',marginTop:4}}>AI 生成内容将自动规避这些词汇，降低合规风险</div>
+              </div>
+              <div className="field-block">
+                <div className="field-label">适用平台</div>
+                <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                  {['小红书','抖音','朋友圈','企业微信','视频号'].map(p => (
+                    <label key={p} style={{display:'flex',alignItems:'center',gap:4,fontSize:12,cursor:'pointer'}}>
+                      <input type="checkbox" style={{accentColor:'#165DFF'}} defaultChecked={Array.isArray(editing.plats) && editing.plats.some(pl => pl.label===p)} />
+                      {p}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div style={{background:'#e8f3ff',borderRadius:8,padding:'10px 12px',fontSize:12,color:'#1d5bd8',lineHeight:1.7}}>
+                <b>✦ 小红书智能学习：</b>粘贴同行爆款内容 URL 或文本，AI 自动学习该账号的风格特征，融入当前人设配置。
+                <button style={{display:'block',marginTop:8,height:28,padding:'0 12px',background:'#165DFF',color:'#fff',border:'none',borderRadius:6,fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+                  + 导入爆款内容学习
+                </button>
+              </div>
+            </div>
+            <div className="drawer-foot">
+              <button onClick={() => setDrawer(null)} style={{height:34,padding:'0 16px',border:'1px solid #e5e6eb',background:'#fff',borderRadius:8,fontSize:13,cursor:'pointer',fontFamily:'inherit',color:'#4e5969'}}>取消</button>
+              <button style={{height:34,padding:'0 20px',background:'#165DFF',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>保存配置</button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  写作模板 MOCK DATA & 组件
+// ═══════════════════════════════════════════════
+
+const TPL_CATS = [
+  { id:'xhs',    label:'小红书文案', count:18, color:'#F53F3F' },
+  { id:'dy',     label:'抖音脚本',   count:12, color:'#1D2129' },
+  { id:'reply',  label:'私信话术',   count:9,  color:'#165DFF' },
+  { id:'plan',   label:'计划书话术', count:6,  color:'#00b42a' },
+  { id:'moments',label:'朋友圈文案', count:10, color:'#ff7d00' },
+  { id:'wakeup', label:'沉睡唤醒话术',count:5, color:'#722ED1' },
+];
+
+const TEMPLATES = {
+  xhs: [
+    { title:'降息热点·种草笔记模板', preview:'存款利率又降了，但其实我三年前就做好了准备……[产品名]帮我锁住了这一轮利率，现在看来真的太值了……', tags:['降息热点','情感故事','种草'], color:'#F53F3F' },
+    { title:'养老焦虑·场景共鸣模板', preview:'你有没有算过，60岁之后每个月需要多少钱才能过得体面？我算了一下，结论让我很慌……', tags:['养老焦虑','共鸣型','引流'], color:'#165DFF' },
+    { title:'爆款标题·10条备选模板', preview:'①《存款利率跌了，这件事更值了》②《为什么我建议30岁就配年金险》③《月薪5000也能做的最聪明理财决定》…', tags:['标题库','爆款结构','点击率'], color:'#00b42a' },
+    { title:'产品对比·信任建立模板', preview:'很多人问我：年金险和银行存款到底哪个划算？今天我来做一个真实对比，数字说话……', tags:['对比分析','信任建立','干货'], color:'#ff7d00' },
+    { title:'人设故事·KOS日记模板', preview:'做保险的第三年，我终于弄清楚了什么叫"真正的为客户好"……不是卖了就走，而是……', tags:['人设故事','KOS','真实感'], color:'#722ED1' },
+    { title:'教育金·亲子场景模板',   preview:'给孩子的礼物可以有很多种，但这一种，很多家长等到孩子18岁才后悔没早点买……', tags:['教育金','亲子','场景'],  color:'#F53F3F' },
+  ],
+  dy: [
+    { title:'15s口播·降息钩子模板',  preview:'开场（0-3s）：存款利率又降了！你的钱还在银行躺着吗？\n转折（3-8s）：其实有一种方式可以锁定现在的利率…\n结尾（8-15s）：想了解的私信我，给你算一份专属方案', tags:['15秒','口播','钩子'], color:'#1D2129' },
+    { title:'30s情景剧·客户答疑模板', preview:'（场景：客户说"期数太长了"）\n销售：我也觉得30年确实很长。但你想想，你的养老需要多少年？…', tags:['情景剧','异议处理','30秒'], color:'#165DFF' },
+    { title:'60s干货·年金险科普模板', preview:'大家好，今天给大家讲清楚一件事：年金险到底是什么？第一，它不是投资产品，而是……', tags:['科普','干货','60秒'], color:'#00b42a' },
+    { title:'转场特效·数据可视化脚本', preview:'（第1屏）银行存款100万，30年后……（第2屏）年金险100万，30年后……（第3屏）差距竟然是……', tags:['特效','数据','对比'], color:'#ff7d00' },
+  ],
+  reply: [
+    { title:'初次接触·破冰话术', preview:'您好！看到您对[内容主题]很感兴趣，刚好我在做这方面的分享。不知道您现在是有了解保险的想法，还是只是随手看看呀？', tags:['破冰','初次接触','引导'], color:'#165DFF' },
+    { title:'"我再想想"·跟进话术', preview:'没问题！这类决定确实需要想清楚，不用急。这样吧，我先把产品的利益演示发给您参考一下，您有空的时候慢慢看，有问题随时问我……', tags:['跟进','异议处理','不推销'], color:'#00b42a' },
+    { title:'"太贵了"·价值重塑话术', preview:'您说的我理解，确实不便宜。但我换个角度给您看：如果分摊到每天，其实不到XX元……而30年后，您拿到手的是……', tags:['价格异议','价值重塑','引导'], color:'#ff7d00' },
+  ],
+  plan: [
+    { title:'计划书发送·引导话术', preview:'给您发了一份专属的利益演示，您可以先看看[产品名]在您的年龄段，存入XX万，每年能领多少、领多久。数字最有说服力，有什么问题我来解答。', tags:['计划书','利益演示','专业感'], color:'#165DFF' },
+    { title:'投保链接·促成话术',   preview:'您已经看完演示了，也觉得这个方案合适，那我们就可以直接在手机上完成投保，整个流程大概5分钟，我陪您一步步来……', tags:['促成','投保','引导'], color:'#00b42a' },
+  ],
+  moments: [
+    { title:'日签·正能量理财朋友圈', preview:'💰 今日理财日签\n存钱不是因为有钱，而是因为懂得未来的自己需要底气。\n——锁利这件事，越早做越划算 #蛮好的人生', tags:['日签','正能量','人设'], color:'#ff7d00' },
+    { title:'客户成交·真实案例朋友圈', preview:'刚送走一位客户，38岁的她今天完成了一件很重要的事。她说：孩子要上大学了，自己的养老也该规划起来了……', tags:['案例','真实感','信任'], color:'#165DFF' },
+  ],
+  wakeup: [
+    { title:'10分钟·轻度唤醒话术', preview:'刚才给您发的演示您看了吗？数字部分有个地方您可能有疑问，我帮您标注出来了，您方便的时候看看～', tags:['10分钟','轻唤醒','关怀'], color:'#722ED1' },
+    { title:'24小时·关怀式唤醒话术', preview:'昨天和您聊了不少，不知道您今天有没有时间再想想？最近利率政策又有变化，可能对您的方案有影响，我整理了一下……', tags:['24小时','关怀','热点借势'], color:'#165DFF' },
+  ],
+};
+
+function TemplatePage({ onUseTemplate }) {
+  const [cat, setCat] = useState('xhs');
+  const list = TEMPLATES[cat] || [];
+  const catInfo = TPL_CATS.find(c => c.id === cat);
+
+  return (
+    <div className="tpl-layout">
+      <div className="tpl-cats">
+        <div className="tpl-cat-label">模板分类</div>
+        {TPL_CATS.map(c => (
+          <div key={c.id} className={`tpl-cat-item ${cat===c.id?'active':''}`} onClick={() => setCat(c.id)}>
+            {c.label}
+            <span className="tpl-cat-count">{c.count}</span>
+          </div>
+        ))}
+      </div>
+      <div className="tpl-main">
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+          <div style={{fontSize:15,fontWeight:700}}>{catInfo?.label}</div>
+          <span style={{fontSize:11,padding:'2px 9px',borderRadius:10,fontWeight:600,background:'#e8f3ff',color:'#165DFF'}}>{list.length} 个模板</span>
+          <div style={{marginLeft:'auto',fontSize:11,color:'#86909c'}}>点击模板可直接填入创作中心</div>
+        </div>
+        <div className="tpl-grid">
+          {list.map((t,i) => (
+            <div key={i} className="tpl-card">
+              <div className="tpl-card-head" style={{background:t.color}} />
+              <div className="tpl-card-body">
+                <div className="tpl-card-title">{t.title}</div>
+                <div className="tpl-card-preview" style={{fontSize:12,color:'#86909c',lineHeight:1.7,height:60,overflow:'hidden',position:'relative'}}>
+                  {t.preview}
+                  <div style={{position:'absolute',bottom:0,left:0,right:0,height:20,background:'linear-gradient(transparent,#fff)'}} />
+                </div>
+              </div>
+              <div className="tpl-card-footer">
+                <div className="tpl-tags-row">
+                  {t.tags.map(tg => <span key={tg} className="tpl-tag">{tg}</span>)}
+                </div>
+                <button className="tpl-use-btn" onClick={() => onUseTemplate && onUseTemplate(t, catInfo)}>使用 →</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  AI生图 MOCK DATA & 组件
+// ═══════════════════════════════════════════════
+
+const GEN_STYLES = [
+  {id:'real',   label:'写实摄影'},
+  {id:'illus',  label:'插画风'},
+  {id:'water',  label:'水彩淡雅'},
+  {id:'minimal',label:'极简风'},
+  {id:'film',   label:'电影感'},
+  {id:'3d',     label:'3D渲染'},
+];
+const GEN_RATIOS = [
+  {id:'1:1',  icon:'⬛', label:'1:1'},
+  {id:'4:3',  icon:'▬',  label:'4:3'},
+  {id:'9:16', icon:'▮',  label:'9:16'},
+];
+const GEN_SCENES = [
+  '🌸 小红书封面', '📱 抖音竖版', '🖼️ 内容配图',
+  '📊 产品展示', '👩‍💼 人物形象', '🏠 生活场景',
+];
+const PREVIEW_IMGS = [
+  {bg:'linear-gradient(135deg,#e8f3ff,#165DFF)', emoji:'🌸', label:'方案A'},
+  {bg:'linear-gradient(135deg,#fff7e8,#ff7d00)', emoji:'✨', label:'方案B'},
+  {bg:'linear-gradient(135deg,#e8ffea,#00b42a)', emoji:'💎', label:'方案C'},
+  {bg:'linear-gradient(135deg,#f0e8ff,#722ED1)', emoji:'🎯', label:'方案D'},
+];
+
+function AiGenPage() {
+  const [style, setStyle]   = useState('real');
+  const [ratio, setRatio]   = useState('9:16');
+  const [prompt, setPrompt] = useState('');
+  const [genState, setGenState] = useState('idle'); // idle | loading | done
+  const [quality, setQuality] = useState(80);
+
+  const handleGen = () => {
+    if (!prompt.trim()) return;
+    setGenState('loading');
+    setTimeout(() => setGenState('done'), 2200);
+  };
+
+  return (
+    <div className="aigen-layout">
+      {/* 左侧参数面板 */}
+      <div className="aigen-left">
+        <div className="aigen-left-scroll">
+          <div style={{fontSize:14,fontWeight:700,marginBottom:14}}>AI 生图</div>
+
+          <div className="aigen-label">描述你想要的画面</div>
+          <textarea
+            className="aigen-prompt"
+            value={prompt}
+            onChange={e => setPrompt(e.target.value)}
+            placeholder="例：一位30岁职场女性，坐在咖啡厅，手持平板，笑容自信，小红书竖版封面风格"
+          />
+          <div style={{fontSize:10,color:'#86909c',marginTop:4,marginBottom:16}}>
+            支持中文 · 越详细效果越好
+          </div>
+
+          <div className="aigen-label">生成风格</div>
+          <div className="style-chips" style={{marginBottom:16}}>
+            {GEN_STYLES.map(s => (
+              <div key={s.id} className={`style-chip ${style===s.id?'active':''}`} onClick={() => setStyle(s.id)}>
+                {s.label}
+              </div>
+            ))}
+          </div>
+
+          <div className="aigen-label">画面比例</div>
+          <div className="ratio-chips" style={{marginBottom:16}}>
+            {GEN_RATIOS.map(r => (
+              <div key={r.id} className={`ratio-chip ${ratio===r.id?'active':''}`} onClick={() => setRatio(r.id)}>
+                <span className="ratio-icon">{r.icon}</span>
+                <span>{r.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="aigen-label">快捷场景</div>
+          <div className="scene-grid" style={{marginBottom:16}}>
+            {GEN_SCENES.map((s,i) => (
+              <button key={i} className="scene-btn" onClick={() => setPrompt(s.replace(/^.+ /,'') + '，小红书内容配图，精致质感')}>
+                {s}
+              </button>
+            ))}
+          </div>
+
+          <div className="aigen-label">图片质量</div>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+            <input className="quality-slider" type="range" min="40" max="100" value={quality} onChange={e => setQuality(+e.target.value)} />
+            <span style={{fontSize:12,fontWeight:600,color:'#165DFF',minWidth:32}}>{quality}</span>
+          </div>
+          <div style={{fontSize:10,color:'#86909c',marginBottom:4}}>
+            质量越高生成越慢，消耗权益分越多
+          </div>
+        </div>
+
+        <button className="gen-btn" onClick={handleGen} disabled={!prompt.trim() || genState==='loading'}>
+          {genState==='loading'
+            ? <><span style={{width:14,height:14,border:'2px solid rgba(255,255,255,.4)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin .6s linear infinite',display:'inline-block'}} /> 生成中…</>
+            : '✦ 生成图片（4张）'}
+        </button>
+      </div>
+
+      {/* 右侧预览 */}
+      <div className="aigen-right">
+        {genState === 'idle' && (
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',flexDirection:'column',gap:12,color:'#86909c'}}>
+            <img className="aigen-empty-icon" src="assets/aigen/empty-preview.png" alt="AI生图预览" />
+            <div style={{fontSize:14,fontWeight:600}}>填写描述后点击「生成图片」</div>
+            <div style={{fontSize:12}}>每次生成 4 张方案供选择，单次消耗 4 权益分</div>
+          </div>
+        )}
+        {genState === 'loading' && (
+          <div className="img-grid">
+            {[0,1,2,3].map(i => (
+              <div key={i} className="img-card">
+                <div className="img-loading">
+                  <span style={{width:28,height:28,border:'3px solid #e5e6eb',borderTopColor:'#165DFF',borderRadius:'50%',animation:'spin .7s linear infinite',display:'inline-block'}} />
+                  <span style={{fontSize:12}}>生成中…</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {genState === 'done' && (
+          <>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+              <div style={{fontSize:14,fontWeight:700}}>生成结果</div>
+              <span style={{fontSize:11,background:'#e8ffea',color:'#00b42a',padding:'2px 8px',borderRadius:10,fontWeight:600}}>✓ 4张已生成</span>
+              <div style={{marginLeft:'auto',display:'flex',gap:6}}>
+                <button style={{height:28,padding:'0 12px',borderRadius:7,fontSize:12,border:'1px solid #e5e6eb',background:'#fff',cursor:'pointer',color:'#4e5969',fontFamily:'inherit'}}>重新生成</button>
+                <button style={{height:28,padding:'0 12px',borderRadius:7,fontSize:12,border:'none',background:'#165DFF',cursor:'pointer',color:'#fff',fontFamily:'inherit',fontWeight:600}}>全部下载</button>
+              </div>
+            </div>
+            <div className="img-grid">
+              {PREVIEW_IMGS.map((img,i) => (
+                <div key={i} className="img-card">
+                  <div className="img-thumb" style={{background:img.bg}}>
+                    <span style={{fontSize:52,position:'relative',zIndex:1}}>{img.emoji}</span>
+                    <div className="img-thumb-overlay" />
+                    <span style={{position:'absolute',top:8,left:8,background:'rgba(0,0,0,.5)',color:'#fff',fontSize:10,padding:'2px 7px',borderRadius:10,fontWeight:600}}>{img.label}</span>
+                  </div>
+                  <div className="img-card-actions">
+                    <button className="img-act-btn">下载</button>
+                    <button className="img-act-btn">用作封面</button>
+                    <button className="img-act-btn primary">用此图</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  选题广场 MOCK DATA
+// ═══════════════════════════════════════════════
+
+const HOT_TOPICS = [
+  { rank:1, title:'《存款利率跌破2%，普通家庭的钱到底该怎么放？》', tags:['降息热点','理财规划','家庭保险'], plats:['小红书','抖音'], views:'124万', engage:'3.2万', hot:'🔥 爆发式增长 +340%', tip:'适合年金险锁利率角度切入' },
+  { rank:2, title:'《2026年养老焦虑调查：60%的人没有养老规划》', tags:['养老焦虑','退休规划','社会热点'], plats:['微博','小红书'], views:'88万',  engage:'2.1万', hot:'↑ 持续走热 +180%', tip:'强共鸣，适合养老年金角度' },
+  { rank:3, title:'《给孩子规划教育金，这4件事必须想清楚》', tags:['教育金','亲子理财','家庭规划'], plats:['小红书'],           views:'61万',  engage:'1.8万', hot:'↑ 稳定热点 +95%',  tip:'教育年金+家庭险组合切入' },
+  { rank:4, title:'《月薪8000，怎么给全家配齐保险？》',            tags:['保险配置','普通家庭','实用攻略'], plats:['抖音','小红书'], views:'49万',  engage:'1.4万', hot:'↑ 稳定增长 +62%',  tip:'保险规划全流程，引导私信' },
+  { rank:5, title:'《长期储蓄vs短期理财，哪个才适合普通人？》',     tags:['储蓄理财','资产配置','降息背景'], plats:['小红书'],           views:'37万',  engage:'9,800', hot:'→ 平稳 +28%',       tip:'年金险 vs 银行存款对比' },
+  { rank:6, title:'《重疾险理赔难？真实案例告诉你真相》',           tags:['重疾险','理赔','消费者权益'],   plats:['微博','抖音'],     views:'29万',  engage:'8,200', hot:'↑ 二次传播 +41%',  tip:'借势做健康险信任建设' },
+];
+
+const INSPI_COPY = [
+  { emoji:'📉', bg:'linear-gradient(135deg,#e8f3ff,#bcd1ff)', title:'降息时代，锁利才是王道', sub:'文案灵感 · 降息热点系列', views:'4.2万', likes:'1,800' },
+  { emoji:'🏠', bg:'linear-gradient(135deg,#e8ffea,#b7f5c2)', title:'不让父母的老年金不够用', sub:'文案灵感 · 养老场景系列', views:'3.8万', likes:'1,560', tall:true },
+  { emoji:'👶', bg:'linear-gradient(135deg,#fff7e8,#ffd591)', title:'给孩子的第一份礼物，不是玩具', sub:'文案灵感 · 教育金系列', views:'5.1万', likes:'2,100' },
+  { emoji:'💰', bg:'linear-gradient(135deg,#fff0f6,#ffadd2)', title:'复利增值，时间是最好的朋友', sub:'文案灵感 · 年金险核心卖点', views:'3.1万', likes:'980' },
+  { emoji:'🌙', bg:'linear-gradient(135deg,#e8f3ff,#a5c7ff)', title:'睡着了，钱也在帮你打工', sub:'文案灵感 · 被动收入系列', views:'6.7万', likes:'2,800', tall:true },
+  { emoji:'📊', bg:'linear-gradient(135deg,#e8ffea,#95f0b0)', title:'一张表看懂年金险和存款的差距', sub:'文案灵感 · 数据对比系列', views:'2.9万', likes:'840' },
+  { emoji:'🔒', bg:'linear-gradient(135deg,#fff7e8,#ffc069)', title:'利率3.0时代，这类人最需要年金险', sub:'文案灵感 · 人群定位系列', views:'3.4万', likes:'1,220' },
+  { emoji:'🎯', bg:'linear-gradient(135deg,#f0e8ff,#c4a0ff)', title:'30岁开始，每月存一点的惊人结果', sub:'文案灵感 · 复利故事系列', views:'4.0万', likes:'1,470', tall:true },
+];
+
+const INSPI_COVER = [
+  { emoji:'🌸', bg:'linear-gradient(135deg,#fff0f6,#ff85c2)', title:'「存款利率又降了」封面模板', sub:'清新人像风 · 1242×1660', views:'2.1万', likes:'760' },
+  { emoji:'💎', bg:'linear-gradient(135deg,#e8f3ff,#60abff)', title:'蓝金高端理财封面', sub:'商务质感风 · 1242×1660', views:'3.3万', likes:'1,100', tall:true },
+  { emoji:'🌿', bg:'linear-gradient(135deg,#e8ffea,#52c41a)', title:'绿意家庭保障封面', sub:'自然治愈风 · 1242×1660', views:'1.8万', likes:'640' },
+  { emoji:'🔥', bg:'linear-gradient(135deg,#fff7e8,#fa8c16)', title:'爆款热点借势封面', sub:'冲击视觉风 · 1242×1660', views:'4.5万', likes:'1,950' },
+  { emoji:'🌙', bg:'linear-gradient(135deg,#1d2129,#4e5969)', title:'极简暗调保险封面', sub:'高级极简风 · 1242×1660', views:'2.7万', likes:'980', tall:true },
+  { emoji:'🎀', bg:'linear-gradient(135deg,#fff0f6,#ffadd2)', title:'温暖亲子系列封面', sub:'温馨插画风 · 1242×1660', views:'3.0万', likes:'1,200' },
+];
+
+const INSPI_VIDEO = [
+  { emoji:'🎬', bg:'linear-gradient(135deg,#1d2129,#165DFF)', title:'「存款降息，年金真香」15秒口播模板', sub:'抖音爆款结构 · 完播率82%', views:'8.6万', likes:'3,400', tall:true },
+  { emoji:'📱', bg:'linear-gradient(135deg,#165DFF,#722ED1)', title:'三屏快剪·年金险卖点拆解', sub:'竖版三幕结构 · 30秒', views:'5.2万', likes:'1,900' },
+  { emoji:'🗣️', bg:'linear-gradient(135deg,#00b42a,#52c41a)', title:'真实对话·处理"期数太长"异议', sub:'情景剧本 · 60秒', views:'4.1万', likes:'1,560' },
+  { emoji:'✨', bg:'linear-gradient(135deg,#fa8c16,#ffd666)', title:'转场特效·利率对比可视化', sub:'数据动效模板 · 30秒', views:'3.7万', likes:'1,300', tall:true },
+  { emoji:'🎯', bg:'linear-gradient(135deg,#f53f3f,#ff7875)', title:'痛点直击开场·养老焦虑系列', sub:'强钩子结构 · 15秒', views:'6.3万', likes:'2,700' },
+];
+
+const INSPI_MAP = { copy: INSPI_COPY, cover: INSPI_COVER, video: INSPI_VIDEO };
+
+// ═══════════════════════════════════════════════
+//  选题广场
+// ═══════════════════════════════════════════════
+
+function TopicPage({ onUseHot }) {
+  const [tab, setTab] = useState('hot');           // 'hot' | 'inspi'
+  const [inspiTab, setInspiTab] = useState('copy'); // 'copy' | 'cover' | 'video'
+
+  const inspiList = INSPI_MAP[inspiTab] || [];
+  const inspiColumns = Array.from({ length: 4 }, () => []);
+  inspiList.forEach((item, i) => inspiColumns[i % 4].push(item));
+
+  return (
+    <div className="topic-layout">
+      {/* 一级子 tab */}
+      <div className="topic-subtabs">
+        {[['hot','🔥 行业热点'],['inspi','🏝️ 灵感岛']].map(([id,label]) => (
+          <div key={id} className={`topic-subtab ${tab===id?'active':''}`} onClick={() => setTab(id)}>
+            {label}
+          </div>
+        ))}
+        <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:8,fontSize:12,color:'#86909c'}}>
+          <span>数据每小时更新</span>
+          <button style={{height:26,padding:'0 10px',borderRadius:6,fontSize:11,border:'1px solid #e5e6eb',background:'#fff',color:'#4e5969',cursor:'pointer',fontFamily:'inherit'}}>
+            ⚙️ 自定义关键词
+          </button>
+        </div>
+      </div>
+
+      <div className="topic-body">
+        {/* ── 行业热点 ── */}
+        {tab === 'hot' && (
+          <div className="hot-list">
+            <div className="hot-head">
+              <div style={{fontSize:15,fontWeight:700}}>行业热点追踪</div>
+              <div style={{fontSize:11,color:'#86909c'}}>实时抓取小红书 / 抖音 / 微博热榜 · 保险相关内容</div>
+            </div>
+            <div className="hot-grid">
+              {HOT_TOPICS.map((t) => (
+                <div key={t.rank} className="hot-item">
+                  <div className={`hot-rank ${t.rank<=3?'r'+t.rank:'rn'}`}>{t.rank}</div>
+                  <div className="hot-info">
+                    <div className="hot-title">{t.title}</div>
+                    <div className="hot-tags">
+                      {t.tags.map(tg => <span key={tg} className="hot-tag">{tg}</span>)}
+                      {t.plats.map(p => (
+                        <span key={p} style={{fontSize:10,padding:'2px 7px',borderRadius:10,fontWeight:600,
+                          background: p==='小红书'?'#fff0f0': p==='抖音'?'#f2f3f5':'#e8f3ff',
+                          color: p==='小红书'?'#f53f3f': p==='抖音'?'#1d2129':'#165DFF'
+                        }}>{p}</span>
+                      ))}
+                    </div>
+                    <div className="hot-meta">
+                      <span className="hot-meta-item">👁 {t.views} 阅读</span>
+                      <span className="hot-meta-item">💬 {t.engage} 互动</span>
+                      <span className="hot-meta-item hot-trend-up">{t.hot}</span>
+                    </div>
+                    <div style={{marginTop:7,fontSize:11,color:'#165DFF',background:'#e8f3ff',borderRadius:6,padding:'4px 9px',display:'inline-block',fontWeight:500}}>
+                      💡 {t.tip}
+                    </div>
+                  </div>
+                  <div className="hot-actions">
+                    <button onClick={() => onUseHot && onUseHot(t)} style={{height:30,padding:'0 14px',background:'#165DFF',color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer',whiteSpace:'nowrap'}}>
+                      ✦ 蹭热点写作
+                    </button>
+                    <button style={{height:28,padding:'0 10px',background:'#fff',border:'1px solid #e5e6eb',borderRadius:7,fontSize:11,cursor:'pointer',color:'#4e5969',fontFamily:'inherit'}}>
+                      收藏
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── 灵感岛 ── */}
+        {tab === 'inspi' && (
+          <div className="inspi-wrap">
+            <div className="inspi-sticky-head">
+              <div className="inspi-titlebar">
+                <div style={{fontSize:15,fontWeight:700}}>🏝️ 灵感岛</div>
+                <div style={{fontSize:11,color:'#86909c'}}>精选行业优质内容灵感，每日更新</div>
+              </div>
+              <div className="inspi-subtabs">
+                {[['copy','📝 文案灵感'],['cover','🖼️ 小红书封面'],['video','🎬 视频素材']].map(([id,label]) => (
+                  <div key={id} className={`inspi-stab ${inspiTab===id?'active':''}`} onClick={() => setInspiTab(id)}>
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="inspi-grid">
+              {inspiColumns.map((col, colIndex) => (
+                <div key={colIndex} className="inspi-col">
+                  {col.map((c) => {
+                    const i = inspiList.indexOf(c);
+                    return (
+                      <div key={c.title} className="inspi-card">
+                        <div className="inspi-thumb" style={{background:c.bg, height: c.tall?178:(i % 3 === 1 ? 136 : 112)}}>
+                          <span style={{fontSize:38,position:'relative',zIndex:1}}>{c.emoji}</span>
+                        </div>
+                        <div className="inspi-body">
+                          <div className="inspi-title">{c.title}</div>
+                          <div className="inspi-sub">{c.sub}</div>
+                        </div>
+                        <div className="inspi-footer">
+                          <span className="inspi-stat">👁 {c.views} &nbsp; ❤️ {c.likes}</span>
+                          <button className="inspi-use-btn">{inspiTab === 'cover' ? '去 AI生图 →' : '填入创作中心 →'}</button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  潜客公海池 / 跟进任务
+// ═══════════════════════════════════════════════
+
+const CLIENT_POOL = [
+  { id:'p1', name:'李晓雯', avatar:'李', bg:'#e8f3ff', color:'#165DFF', intent:'高意向', score:88, status:'待转企微', source:'小红书内容《存款利率又降了》 → 评论“想了解” → 私信咨询 → 待加企微', dup:'跨平台查重：抖音同手机号命中，已合并为同一潜客', behavior:'页面停留 2分18秒 · KYC 问卷打开未填写 · 计划书未发送', tags:['高意向','养老年金','利率异议'], converted:false },
+  { id:'p2', name:'王浩然', avatar:'王', bg:'#e8ffea', color:'#00b42a', intent:'高意向', score:91, status:'已转企微', source:'抖音口播《40岁养老规划》 → 私信“发我看看” → 企微添加成功', dup:'跨平台查重：无重复线索', behavior:'计划书已打开 3 次 · KYC 已填写 80% · 投保链接可推送', tags:['高意向','已看计划书','投保促成'], converted:true },
+  { id:'p3', name:'陈美玲', avatar:'陈', bg:'#fff0f6', color:'#eb2f96', intent:'待培育', score:54, status:'公海池运营', source:'小红书封面灵感笔记 → 收藏 → 私信“我再想想” → 进入沉睡唤醒', dup:'跨平台查重：视频号昵称相似，待人工确认', behavior:'页面停留 48秒 · 计划书打开 1 次 · KYC 未打开', tags:['待培育','再想想','24小时唤醒'], converted:false },
+  { id:'p4', name:'张明辉', avatar:'张', bg:'#fff7e8', color:'#fa8c16', intent:'待培育', score:22, status:'沉睡客户', source:'抖音热视频 → 完播 → 私信“有空看看” → 24小时未回复', dup:'跨平台查重：无重复线索', behavior:'完播 100% · 未打开计划书 · 最近活跃：昨天 20:31', tags:['待培育','沉睡唤醒','低压触达'], converted:false },
+];
+
+function ClientsPage() {
+  return (
+    <div className="ops-page">
+      <div className="ops-head">
+        <div style={{flex:1}}>
+          <div className="ops-title">潜客公海池</div>
+          <div className="ops-sub">汇总小红书 / 抖音 / 视频号线索，只保留高意向与待培育两类运营视角。</div>
+        </div>
+        <button className="primary-mini">+ 导入线索</button>
+        <button className="secondary-mini">跨平台查重</button>
+      </div>
+      <div className="ops-kpis">
+        {[
+          ['今日新增潜客','63','+21.3%'],
+          ['高意向待跟进','18','平均88分'],
+          ['公海池待培育','145','自动运营中'],
+          ['转为企业好友','37','转化率58.7%'],
+        ].map(([label,val,sub]) => (
+          <div key={label} className="ops-kpi">
+            <div className="ops-kpi-label">{label}</div>
+            <div className="ops-kpi-val">{val}</div>
+            <div style={{fontSize:11,color:'#165DFF',fontWeight:700,marginTop:4}}>{sub}</div>
+          </div>
+        ))}
+      </div>
+      <div className="pool-grid">
+        {CLIENT_POOL.map(c => (
+          <div key={c.id} className="pool-card">
+            <div className="pool-card-top">
+              <div className="pool-avatar" style={{background:c.bg,color:c.color}}>{c.avatar}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div className="pool-name">{c.name}</div>
+                <div className="pool-meta">{c.intent} · 意向分 {c.score} · {c.status}</div>
+              </div>
+              <span className={`pool-tag ${c.converted ? 'green' : c.intent === '高意向' ? 'red' : 'gray'}`}>{c.converted ? '已转企微' : c.intent}</span>
+            </div>
+            <div className="pool-tags">
+              {c.tags.map(t => <span key={t} className="pool-tag">{t}</span>)}
+            </div>
+            <div className="pool-path">
+              <b>线索来源平台路径：</b>{c.source}<br />
+              <b>{c.dup}</b><br />
+              <b>用户行为数据：</b>{c.behavior}
+            </div>
+            <div className="pool-actions">
+              <button className="primary-mini">{c.converted ? '查看企微会话' : '转为企业好友'}</button>
+              <button className="secondary-mini">生成跟进话术</button>
+              <button className="secondary-mini">查看详情</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const FOLLOW_TASKS = [
+  { lane:'10分钟', name:'陈美玲', badge:'21分钟后自动唤醒', desc:'已看计划书后说“我再想想”，建议轻问预算与领取时间。', action:'发送轻跟进' },
+  { lane:'10分钟', name:'赵建国', badge:'8分钟后自动唤醒', desc:'期数异议未继续回复，建议补充保单贷款功能说明。', action:'发送知识卡' },
+  { lane:'3小时', name:'刘思琪', badge:'3小时第1轮', desc:'教育金咨询后未回复，建议推送孩子年龄测算入口。', action:'生成方案' },
+  { lane:'3小时', name:'周若晴', badge:'2小时15分后', desc:'收藏三篇年金内容但未私信，建议用热点借势低压触达。', action:'企微提醒' },
+  { lane:'24小时', name:'张明辉', badge:'24小时第2轮', desc:'沉睡客户，使用降息热点和对比表重新打开话题。', action:'唤醒触达' },
+  { lane:'24小时', name:'苏雅', badge:'明天 10:00', desc:'KYC 问卷打开未填写，推送“3个问题测养老缺口”。', action:'补问卷' },
+];
+
+function FollowPage() {
+  const lanes = ['10分钟', '3小时', '24小时'];
+  return (
+    <div className="ops-page">
+      <div className="ops-head">
+        <div style={{flex:1}}>
+          <div className="ops-title">跟进任务</div>
+          <div className="ops-sub">沉睡唤醒机制按 10分钟 → 3小时 → 24小时 梯度触发，避免过度打扰。</div>
+        </div>
+        <button className="primary-mini">+ 新建跟进</button>
+        <button className="secondary-mini">唤醒规则设置</button>
+      </div>
+      <div className="ops-kpis">
+        {[
+          ['今日待跟进','24','12条高优先级'],
+          ['10分钟轻提醒','6','平均响应率42%'],
+          ['3小时热点借势','9','可配合爆款内容'],
+          ['24小时价值重启','9','沉睡唤醒队列'],
+        ].map(([label,val,sub]) => (
+          <div key={label} className="ops-kpi">
+            <div className="ops-kpi-label">{label}</div>
+            <div className="ops-kpi-val">{val}</div>
+            <div style={{fontSize:11,color:'#86909c',fontWeight:600,marginTop:4}}>{sub}</div>
+          </div>
+        ))}
+      </div>
+      <div className="task-lanes">
+        {lanes.map(lane => (
+          <div key={lane} className="task-lane">
+            <div className="task-lane-title">
+              <span>{lane} 唤醒</span>
+              <span className="task-badge">{FOLLOW_TASKS.filter(t => t.lane === lane).length}</span>
+            </div>
+            {FOLLOW_TASKS.filter(t => t.lane === lane).map(t => (
+              <div key={t.name} className="task-card">
+                <div className="task-row">
+                  <span className="task-name">{t.name}</span>
+                  <span className="task-badge">{t.badge}</span>
+                </div>
+                <div className="task-desc">{t.desc}</div>
+                <div className="pool-actions">
+                  <button className="primary-mini">{t.action}</button>
+                  <button className="secondary-mini">忽略</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  PLACEHOLDER (剩余未开发页面占位)
+// ═══════════════════════════════════════════════
+
+function PlaceholderPage({ page, onGo }) {
+  const nav = NAV_ITEMS.find(n => n.key === page);
+  return (
+    <div className="placeholder-page">
+      <div style={{fontSize:52}}>{nav?.e}</div>
+      <div style={{fontSize:16,fontWeight:700,color:'#1d2129'}}>「{nav?.label}」模块开发中</div>
+      <div style={{fontSize:13,color:'#86909c'}}>功能已规划，可点击下方切换到已完成模块</div>
+      <div style={{display:'flex',gap:10,marginTop:4}}>
+        <button style={{height:34,padding:'0 18px',background:'#165DFF',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer'}} onClick={() => onGo('chat')}>→ 创作中心</button>
+        <button style={{height:34,padding:'0 18px',background:'#fff',color:'#4e5969',border:'1px solid #e5e6eb',borderRadius:8,fontSize:13,fontWeight:500,cursor:'pointer'}} onClick={() => onGo('data')}>→ 数据看板</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
+//  APP ROOT
+// ═══════════════════════════════════════════════
+
+function App() {
+  const [page, setPage]             = useState('chat');
+  const [showViral, setShowViral]   = useState(false);
+  const [recentOpen, setRecentOpen] = useState(false);
+  const [chatSeed, setChatSeed]     = useState(null);
+  const [addedPersonas, setAddedPersonas] = useState([]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowViral(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
+
+  const goPage = (key) => {
+    setPage(key);
+    if (key === 'data') setTimeout(() => setShowViral(true), 2500);
+  };
+
+  const fillCreationCenter = (payload) => {
+    setChatSeed({ id: Date.now(), ...payload });
+    setPage('chat');
+  };
+
+  const useAgentInCreation = (agent) => {
+    const personaId = `agent-${agent.id}`;
+    const photoMap = {
+      a1: '图片素材/头像素材/职场专业女性.png',
+      a2: '图片素材/头像素材/年轻理财达人.png',
+      a3: '图片素材/头像素材/成熟顾问男性.png',
+    };
+    const personaName = agent.name.split('·')[0];
+    setAddedPersonas(prev => prev.some(p => p.id === personaId)
+      ? prev
+      : [...prev, { id: personaId, name: personaName, emoji: agent.emoji, photo: photoMap[agent.id], desc: agent.style || '智能体人设' }]
+    );
+    fillCreationCenter({
+      personaId,
+      prompt: `使用智能体「${agent.name}」生成内容`,
+      reply: `已将「${agent.name}」新增到创作中心人设列表，并切换为当前人设。\n\n人设定位：${agent.role}\n风格策略：${agent.style || agent.desc}\n\n你可以继续输入选题，AI 会按该智能体的语气、禁用词和平台规则生成内容。`,
+    });
+  };
+
+  return (
+    <>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div className="kos-shell">
+
+        {/* ── Sidebar ── */}
+        <div className="kos-sider">
+          <div className="kos-logo">
+            <img className="kos-logo-mark" src="图片素材/营销中台图标.webp" alt="KOS营销中台" />
+            <div>
+              <div style={{fontSize:14,fontWeight:700,letterSpacing:'-.01em'}}>KOS营销中台</div>
+              <div style={{fontSize:10,color:'#86909c'}}>保险获客 Agent</div>
+            </div>
+          </div>
+          <button className="kos-nav-new" onClick={() => goPage('chat')}>+ 新建对话</button>
+          <div className="recent-chat-box">
+            <div className="recent-chat-title" onClick={() => setRecentOpen(v => !v)}>
+              <span>最近对话</span>
+              <span className="recent-chat-toggle">{recentOpen ? '收起 ▲' : '展开 ▼'}</span>
+            </div>
+            {recentOpen && (
+              <div className="recent-chat-list">
+                {RECENT_CHATS.map(c => (
+                  <div key={c.name} className="recent-chat-item" onClick={() => goPage('chat')}>
+                    <span className="recent-chat-icon">{c.icon}</span>
+                    <div className="recent-chat-main">
+                      <div className="recent-chat-name">{c.name}</div>
+                      <div className="recent-chat-time">{c.time}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="kos-nav-scroll">
+            <div className="kos-nav-label">AI获客工作流</div>
+            {NAV_ITEMS.filter(n => n.group === 'flow').map(n => (
+              <div key={n.key} className={`kos-nav-item ${page === n.key ? 'active' : ''}`} onClick={() => goPage(n.key)}>
+                <NavIcon name={n.icon} active={page === n.key} />
+                <span style={{minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{n.label}</span>
+              </div>
+            ))}
+            <div className="kos-nav-label" style={{marginTop:6}}>消息与客户</div>
+            {NAV_ITEMS.filter(n => n.group === 'crm').map(n => (
+              <div key={n.key} className={`kos-nav-item ${page === n.key ? 'active' : ''}`} onClick={() => goPage(n.key)}>
+                <NavIcon name={n.icon} active={page === n.key} />
+                <span style={{flex:1}}>{n.label}</span>
+                {n.badge && <span className="nav-badge">{n.badge}</span>}
+              </div>
+            ))}
+          </div>
+          <div className="kos-user-footer">
+            <div className="kos-avatar">阳</div>
+            <div>
+              <div style={{fontSize:12,fontWeight:600}}>阳阳</div>
+              <div style={{fontSize:10,color:'#86909c'}}>保险获客工作流</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Main ── */}
+        <div className="kos-main">
+          {/* Pages */}
+          <div style={{flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+            <div style={{display: page==='chat'  ? 'flex' : 'none', flex:1, overflow:'hidden'}}><ChatPage onGo={goPage} seed={chatSeed} personas={addedPersonas} /></div>
+            <div style={{display: page==='data'  ? 'flex' : 'none', flex:1, overflow:'hidden'}}><DataPage onShowViral={() => setShowViral(true)} /></div>
+            <div style={{display: page==='topic'  ? 'flex' : 'none', flex:1, overflow:'hidden'}}><TopicPage onUseHot={(hot) => fillCreationCenter({
+              prompt: `蹭热点写作：${hot.title}`,
+              reply: `已把热点「${hot.title}」填入创作中心。\n\n推荐创作角度：${hot.tip}\n数据参考：${hot.views}阅读，${hot.engage}互动，${hot.hot}\n\n内容结构建议：热点开场 → 普通家庭痛点 → 年金险/教育金/保障方案切入 → 私信领取计划书。`,
+            })} /></div>
+            <div style={{display: page==='aigen'  ? 'flex' : 'none', flex:1, overflow:'hidden'}}><AiGenPage /></div>
+            <div style={{display: page==='tpl'    ? 'flex' : 'none', flex:1, overflow:'hidden'}}><TemplatePage onUseTemplate={(tpl, catInfo) => fillCreationCenter({
+              mode: 'tpl',
+              prompt: `使用写作模板「${tpl.title}」`,
+              reply: `已填入「${catInfo?.label || '写作模板'}」模板：${tpl.title}\n\n模板内容：${tpl.preview}\n\n建议替换 [产品名] 为「蛮好的人生」，并结合当前人设补充真实故事、合规表述和私信承接动作。`,
+            })} /></div>
+            <div style={{display: page==='agent'  ? 'flex' : 'none', flex:1, overflow:'hidden'}}><AgentPage onUseAgent={useAgentInCreation} /></div>
+            <div style={{display: page==='pub'    ? 'flex' : 'none', flex:1, overflow:'hidden'}}><PublishPage /></div>
+            <div style={{display: page==='inbox'   ? 'flex' : 'none', flex:1, overflow:'hidden'}}><InboxPage /></div>
+            <div style={{display: page==='clients' ? 'flex' : 'none', flex:1, overflow:'hidden'}}><ClientsPage /></div>
+            <div style={{display: page==='follow'  ? 'flex' : 'none', flex:1, overflow:'hidden'}}><FollowPage /></div>
+            {!['chat','data','topic','aigen','tpl','agent','pub','inbox','clients','follow'].includes(page) && (
+              <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+                <PlaceholderPage page={page} onGo={goPage} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Floating viral card */}
+      {showViral && <ViralFloatCard onClose={() => setShowViral(false)} onFill={(hot) => {
+        setShowViral(false);
+        fillCreationCenter({
+          prompt: `填入同类爆款：${hot.title}`,
+          reply: `已将同类爆款填入创作中心。\n\n爆款标题：${hot.title}\n数据表现：${hot.meta}\nAI拆解：降息焦虑 + 个人故事植入，结构清晰，情绪节奏强。\n\n可直接改写为：普通家庭面对利率下降，如何用年金险锁定长期现金流，并引导私信领取利益演示。`,
+        });
+      }} />}
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
